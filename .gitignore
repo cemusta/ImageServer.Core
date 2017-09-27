@@ -1,3 +1,6 @@
 .vs/
 hurimg.core/bin/
 hurimg.core/obj/
+ImageServer.Core/bin/
+ImageServer.Core/obj/
+ImageServer.Core/ImageServer.Core.user
