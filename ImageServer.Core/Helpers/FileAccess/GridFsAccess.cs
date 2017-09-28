@@ -5,18 +5,18 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 
-namespace ImageServer.Core.Helpers
+namespace ImageServer.Core.Helpers.FileAccess
 {
-    public static class DatabaseHelper
+    public class GridFsAccess: IFileAccessStrategy
     {
 
-        public static async Task<byte[]> GetFileAsync(HostConfig host, string id)
+        public async Task<byte[]> GetFileAsync(HostConfig host, string file)
         {
             GridFSBucket bucket = GetBucket(host);
             byte[] bytes;
             try
             {
-                var ob = new ObjectId(id);
+                var ob = new ObjectId(file);
                 if (ob == ObjectId.Empty)
                     return null;
                 bytes = await bucket.DownloadAsBytesAsync(ob);
@@ -36,7 +36,7 @@ namespace ImageServer.Core.Helpers
             return bytes;
         }
 
-        private static GridFSBucket GetBucket(HostConfig host)
+        private GridFSBucket GetBucket(HostConfig host)
         {
             var client = new MongoClient(host.ConnectionString);
 
@@ -45,7 +45,5 @@ namespace ImageServer.Core.Helpers
             var bucket = new GridFSBucket(database);
             return bucket;
         }
-
-
     }
 }

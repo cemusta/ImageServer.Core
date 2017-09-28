@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ImageServer.Core.Helpers;
+using ImageServer.Core.Helpers.FileAccess;
 using ImageServer.Core.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -33,7 +34,7 @@ namespace ImageServer.Core.Controllers
         
         private async Task<IActionResult> ImageResult(string id, string slug, int w, int h, int quality, string options = "")
         {
-            var bytes = await FileHelper.GetFileAsync(slug, id, _hosts);
+            var bytes = await FileAccessHelper.GetFileAsync(slug, id, _hosts);
 
             if (bytes == null)
                 return NotFound();
