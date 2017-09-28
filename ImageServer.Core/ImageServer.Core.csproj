@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
     <UserSecretsId>95a15d39-0882-406c-abee-2276554bb504</UserSecretsId>
     <AssemblyName>ImageServer.Core</AssemblyName>
     <RootNamespace>ImageServer.Core</RootNamespace>
