@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ImageServer.Core.Helpers.FileAccess;
 using ImageServer.Core.Model;
+using ImageServer.Core.Services.FileAccess;
 
 namespace ImageServer.Core.Services
 {

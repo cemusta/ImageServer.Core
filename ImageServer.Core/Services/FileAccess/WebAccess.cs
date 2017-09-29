@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ImageServer.Core.Model;
 
-namespace ImageServer.Core.Helpers.FileAccess
+namespace ImageServer.Core.Services.FileAccess
 {
     public class WebAccess : IFileAccessStrategy
     {

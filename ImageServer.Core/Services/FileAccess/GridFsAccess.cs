@@ -5,7 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 
-namespace ImageServer.Core.Helpers.FileAccess
+namespace ImageServer.Core.Services.FileAccess
 {
     public class GridFsAccess: IFileAccessStrategy
     {
