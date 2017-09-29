@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ImageServer.Core.Helpers.FileAccess;
 using ImageServer.Core.Model;
-using ImageServer.Core.Services;
 
-namespace ImageServer.Core.Helpers.FileAccess
+namespace ImageServer.Core.Services
 {
-
     public class FileAccessService: IFileAccessService
     {
         public async Task<byte[]> GetFileAsync(string slug, string file, List<HostConfig> hosts)

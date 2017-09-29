@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ImageServer.Core.Helpers.FileAccess;
 using ImageServer.Core.Model;
 using ImageServer.Core.Route;
 using ImageServer.Core.Services;
