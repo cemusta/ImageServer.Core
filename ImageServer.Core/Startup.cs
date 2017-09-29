@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using ImageServer.Core.Helpers.FileAccess;
 using ImageServer.Core.Model;
 using ImageServer.Core.Route;
+using ImageServer.Core.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
@@ -39,6 +41,9 @@ namespace ImageServer.Core
 
             var hosts = Configuration.GetSection("Hosts");
             services.Configure<List<HostConfig>>(hosts);
+
+            services.AddTransient<IFileAccessService,FileAccessService>();
+            services.AddTransient<IImageService, ImageService>();
 
             services.Configure<RouteOptions>(options =>
                 options.ConstraintMap.Add("gridfs", typeof(GridFsRouteConstraint)));

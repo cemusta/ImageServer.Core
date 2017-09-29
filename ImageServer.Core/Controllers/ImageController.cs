@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using ImageServer.Core.Helpers;
-using ImageServer.Core.Helpers.FileAccess;
 using ImageServer.Core.Model;
+using ImageServer.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -11,9 +10,14 @@ namespace ImageServer.Core.Controllers
     public class ImageController : Controller
     {
         readonly List<HostConfig> _hosts;
-        public ImageController(IOptions<List<HostConfig>> hosts)
+        readonly IFileAccessService _fileService;
+        readonly IImageService _imageService;
+
+        public ImageController(IOptions<List<HostConfig>> hosts, IFileAccessService fileServiceService, IImageService imageService)
         {
             _hosts = hosts.Value;
+            _fileService = fileServiceService;
+            _imageService = imageService;
         }
 
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{id:gridfs}")]
@@ -34,13 +38,13 @@ namespace ImageServer.Core.Controllers
         
         private async Task<IActionResult> ImageResult(string id, string slug, int w, int h, int quality, string options = "")
         {
-            var bytes = await FileAccessHelper.GetFileAsync(slug, id, _hosts);
+            var bytes = await _fileService.GetFileAsync(slug, id, _hosts);
 
             if (bytes == null)
                 return NotFound();
 
             if (w != 0 && h != 0)
-                bytes = ImageHelper.GetImageAsBytes(w, h, quality, bytes, options);
+                bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options);
 
             return File(bytes, "image/jpeg");
         }

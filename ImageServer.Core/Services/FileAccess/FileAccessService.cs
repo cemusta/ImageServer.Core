@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ImageServer.Core.Model;
+using ImageServer.Core.Services;
 
 namespace ImageServer.Core.Helpers.FileAccess
 {
-    public static class FileAccessHelper
+
+    public class FileAccessService: IFileAccessService
     {
-        public static async Task<byte[]> GetFileAsync(string slug, string file, List<HostConfig> hosts)
+        public async Task<byte[]> GetFileAsync(string slug, string file, List<HostConfig> hosts)
         {
             var host = hosts.Find(x => x.Slug == slug);
 
@@ -22,7 +24,7 @@ namespace ImageServer.Core.Helpers.FileAccess
             return await access.GetFileAsync(host, file);
         }
 
-        private static IFileAccessStrategy GetAccess(HostType hostType)
+        private IFileAccessStrategy GetAccess(HostType hostType)
         {
             switch (hostType)
             {

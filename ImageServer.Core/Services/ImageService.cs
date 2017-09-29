@@ -1,10 +1,10 @@
-﻿using ImageMagick;
+using ImageMagick;
 
-namespace ImageServer.Core.Helpers
+namespace ImageServer.Core.Services
 {
-    public static class ImageHelper
+    public class ImageService: IImageService
     {
-        public static byte[] GetImageAsBytes(int w, int h, int quality, byte[] bytes, string options)
+        public byte[] GetImageAsBytes(int w, int h, int quality, byte[] bytes, string options)
         {
             MagickImageInfo info = new MagickImageInfo(bytes);
 
@@ -78,4 +78,3 @@ namespace ImageServer.Core.Helpers
         }
     }
 }
-
