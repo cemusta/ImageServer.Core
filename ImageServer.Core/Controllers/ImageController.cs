@@ -16,7 +16,7 @@ namespace ImageServer.Core.Controllers
             _hosts = hosts.Value;
         }
 
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{id:gridfs}.{ext?}")]
+        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{id:gridfs}")]
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{id:filepath}")]
         [HttpGet("/i/{slug}/{id:filepath}")]
         public async Task<IActionResult> ImageAsync(string id, string slug, int w, int h, int quality)
@@ -24,7 +24,7 @@ namespace ImageServer.Core.Controllers
             return await ImageResult(id, slug, w, h, quality);
         }
 
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:gridfs}.{ext?}")]
+        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:gridfs}")]
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:filepath}")]
         public async Task<IActionResult> ImageWithOptionsAsync(string id, string slug, int w, int h, int quality, string options = "")
         {

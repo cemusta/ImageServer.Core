@@ -12,6 +12,9 @@ namespace ImageServer.Core.Helpers.FileAccess
 
         public async Task<byte[]> GetFileAsync(HostConfig host, string file)
         {
+            int index = file.LastIndexOf('.');
+            file = index == -1 ? file : file.Substring(0, index); //remove extension if any
+
             GridFSBucket bucket = GetBucket(host);
             byte[] bytes;
             try
