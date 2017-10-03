@@ -18,8 +18,8 @@
     public enum HostType
     {
         FileSystem = 0,
-        MongoGridFs = 1,
-        RemoteUrl = 2
+        GridFs = 1,
+        Web = 2
     }
 
 }

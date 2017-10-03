@@ -4,3 +4,5 @@ hurimg.core/obj/
 ImageServer.Core/bin/
 ImageServer.Core/obj/
 ImageServer.Core/ImageServer.Core.user
+ImageServer.Tests/bin/
+ImageServer.Tests/obj/

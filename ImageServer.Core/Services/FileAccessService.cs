@@ -23,15 +23,15 @@ namespace ImageServer.Core.Services
             return await access.GetFileAsync(host, file);
         }
 
-        private IFileAccessStrategy GetAccess(HostType hostType)
+        public IFileAccessStrategy GetAccess(HostType hostType)
         {
             switch (hostType)
             {
                 case HostType.FileSystem:
                     return new FileSystemAccess();
-                case HostType.MongoGridFs:
+                case HostType.GridFs:
                     return new GridFsAccess();
-                case HostType.RemoteUrl:
+                case HostType.Web:
                     return new WebAccess();
                 default:
                     //todo log: error!, null host type.

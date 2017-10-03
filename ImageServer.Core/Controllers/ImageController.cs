@@ -35,7 +35,6 @@ namespace ImageServer.Core.Controllers
             return await ImageResult(id, slug, w, h, quality, options);
         }
 
-        
         private async Task<IActionResult> ImageResult(string id, string slug, int w, int h, int quality, string options = "")
         {
             var bytes = await _fileService.GetFileAsync(slug, id, _hosts);
@@ -48,7 +47,5 @@ namespace ImageServer.Core.Controllers
 
             return File(bytes, "image/jpeg");
         }
-
-
     }
 }

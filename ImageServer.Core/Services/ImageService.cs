@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using ImageMagick;
 
 namespace ImageServer.Core.Services
@@ -75,6 +77,21 @@ namespace ImageServer.Core.Services
 
             if (options.Contains("g")) //grayscale
                 image.Grayscale(PixelIntensityMethod.Average);
+        }
+        
+        public string GetVersion()
+        {
+            return MagickNET.Version;
+        }
+
+        public string GetFeatures()
+        {
+            return MagickNET.Features.Trim();
+        }
+
+        public List<MagickFormatInfo> GetSupportedFormats()
+        {            
+            return MagickNET.SupportedFormats.ToList();
         }
     }
 }

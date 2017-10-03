@@ -6,6 +6,7 @@
     <AssemblyName>ImageServer.Core</AssemblyName>
     <RootNamespace>ImageServer.Core</RootNamespace>
     <TypeScriptToolsVersion>2.3</TypeScriptToolsVersion>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
