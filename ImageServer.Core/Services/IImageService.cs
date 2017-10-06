@@ -5,7 +5,7 @@ namespace ImageServer.Core.Services
 {
     public interface IImageService
     {
-        byte[] GetImageAsBytes(int w, int h, int quality, byte[] bytes, string options);
+        byte[] GetImageAsBytes(int w, int h, int quality, byte[] bytes, string options, out string mimeType);
 
         string GetVersion();
 

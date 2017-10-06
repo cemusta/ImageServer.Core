@@ -6,26 +6,37 @@ namespace ImageServer.Core.Services
 {
     public class ImageService: IImageService
     {
-        public byte[] GetImageAsBytes(int w, int h, int quality, byte[] bytes, string options)
+        public byte[] GetImageAsBytes(int w, int h, int quality, byte[] bytes, string options, out string mimeType)
         {
             MagickImageInfo info = new MagickImageInfo(bytes);
 
             if (info.Format == MagickFormat.Gif || info.Format == MagickFormat.Gif87)
+            {
+                mimeType = "image/gif";
                 return ProcessGif(w, h, quality, bytes, options);
+            }
 
-            return ProcessImage(w, h, quality, bytes, options);
+            return ProcessImage(w, h, quality, bytes, options, out mimeType);
         }
 
-        private static byte[] ProcessImage(int w, int h, int quality, byte[] bytes, string options)
+        private static byte[] ProcessImage(int w, int h, int quality, byte[] bytes, string options, out string mimeType)
         {
             using (MagickImage image = new MagickImage(bytes))
             {
                 ResizeSingleImage(w, h, quality, options, image);
 
                 // return the result
-                bytes = image.ToByteArray(MagickFormat.Pjpeg);
+                if (image.HasAlpha)
+                {
+                    mimeType = "image/png";
+                    bytes = image.ToByteArray(MagickFormat.Png);
+                }
+                else
+                {
+                    mimeType = "image/jpeg";
+                    bytes = image.ToByteArray(MagickFormat.Pjpeg);
+                }
             }
-
             return bytes;
         }
 

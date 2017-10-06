@@ -43,9 +43,12 @@ namespace ImageServer.Core.Controllers
                 return NotFound();
 
             if (w != 0 && h != 0)
-                bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options);
+            {
+                bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mime);
+                return File(bytes, mime);
+            }
 
-            return File(bytes, "image/jpeg");
+            return NotFound();
         }
     }
 }
