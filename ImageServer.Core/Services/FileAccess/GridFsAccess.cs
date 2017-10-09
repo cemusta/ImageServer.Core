@@ -32,7 +32,6 @@ namespace ImageServer.Core.Services.FileAccess
                 }
 
                 //log other errors....
-                Console.WriteLine(ex.Message);
                 throw;
             }
 

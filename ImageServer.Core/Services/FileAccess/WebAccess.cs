@@ -12,27 +12,18 @@ namespace ImageServer.Core.Services.FileAccess
         {
             var url = host.Backend + '/' + file;
 
-            try
+            using (var stream = new MemoryStream())
             {
-                using (var stream = new MemoryStream())
+
+                using (var client = new HttpClient())
+                using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+                using (var contentStream = await (await client.SendAsync(request)).Content.ReadAsStreamAsync())
                 {
-
-                    using (var client = new HttpClient())
-                    using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-                    using (var contentStream = await (await client.SendAsync(request)).Content.ReadAsStreamAsync())
-                    {
-                        await contentStream.CopyToAsync(stream);
-                    }
-
-                    return stream.TryGetBuffer(out ArraySegment<byte> data) ? data.Array : null;
+                    await contentStream.CopyToAsync(stream);
                 }
-            }
-            catch
-            {
-                //todo: log this.
-                return null;
-            }
 
+                return stream.TryGetBuffer(out ArraySegment<byte> data) ? data.Array : null;
+            }
         }
     }
 }

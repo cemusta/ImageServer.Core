@@ -27,7 +27,7 @@ namespace ImageServer.Tests
         [InlineData("55ea0a2df018fbb8f8660eab", true)]
         [InlineData("zzea0a2df018fbb8f8660eab", false)]
         [InlineData("zzea0a2df018fbb8f8660e", false)]
-        [InlineData("zzea0a2df018fbb8f8660eabaa", true)]
+        [InlineData("/2017-10-9/eaccf175-33bf-4317-9e6c-13f2b7325dc6.jpg", true)]
         public void Test_FilePathRouteConstraint(string parameterValue, bool expected)
         {
             // Arrange
