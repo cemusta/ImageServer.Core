@@ -4,7 +4,7 @@ using ImageMagick;
 
 namespace ImageServer.Core.Services
 {
-    public class ImageService: IImageService
+    public class ImageService : IImageService
     {
         public byte[] GetImageAsBytes(int w, int h, int quality, byte[] bytes, string options, out string mimeType)
         {
@@ -13,17 +13,17 @@ namespace ImageServer.Core.Services
             if (info.Format == MagickFormat.Gif || info.Format == MagickFormat.Gif87)
             {
                 mimeType = "image/gif";
-                return ProcessGif(w, h, quality, bytes, options);
+                return ProcessGif(info, w, h, quality, bytes, options);
             }
 
-            return ProcessImage(w, h, quality, bytes, options, out mimeType);
+            return ProcessImage(info, w, h, quality, bytes, options, out mimeType);
         }
 
-        private static byte[] ProcessImage(int w, int h, int quality, byte[] bytes, string options, out string mimeType)
+        private static byte[] ProcessImage(MagickImageInfo info, int w, int h, int quality, byte[] bytes, string options, out string mimeType)
         {
             using (MagickImage image = new MagickImage(bytes))
             {
-                ResizeSingleImage(w, h, quality, options, image);
+                ResizeSingleImage(info, w, h, quality, options, image);
 
                 // return the result
                 if (image.HasAlpha)
@@ -40,7 +40,7 @@ namespace ImageServer.Core.Services
             return bytes;
         }
 
-        private static byte[] ProcessGif(int w, int h, int quality, byte[] bytes, string options)
+        private static byte[] ProcessGif(MagickImageInfo info, int w, int h, int quality, byte[] bytes, string options)
         {
             using (MagickImageCollection collection = new MagickImageCollection(bytes))
             {
@@ -50,7 +50,7 @@ namespace ImageServer.Core.Services
                 foreach (var magickImage in collection)
                 {
                     var img = (MagickImage)magickImage;
-                    ResizeSingleImage(w, h, quality, options, img);
+                    ResizeSingleImage(info, w, h, quality, options, img);
                     //img.Resize(w, h);
                 }
 
@@ -64,32 +64,41 @@ namespace ImageServer.Core.Services
             }
         }
 
-        private static void ResizeSingleImage(int w, int h, int quality, string options, MagickImage image)
+        private static void ResizeSingleImage(MagickImageInfo info, int w, int h, int quality, string options, MagickImage image)
         {
-            if (options.Contains("f") || options.Contains("t")) //thumbnail
+            if (info.Width == w && info.Height == h) //requested image is same size
+            {
+            }
+            else if (w == 0 && h == 0) //requested image is same size
+            {
+            }
+            else if (options.Contains("f") || options.Contains("t")) //scale with aspect of image
             {
                 MagickGeometry size = new MagickGeometry(w, h);
                 image.Thumbnail(size);
-                image.Quality = quality;
             }
-            else
+            else if (w == 0 || h == 0) //scale with aspect of image
             {
-                // This will resize the image to a fixed size without maintaining the aspect ratio.
+                MagickGeometry size = new MagickGeometry(w, h);
+                image.Thumbnail(size);
+            }
+            else // This will resize the image to a fixed size without maintaining the aspect ratio.
+            {
                 MagickGeometry size = new MagickGeometry(w, h)
                 {
                     IgnoreAspectRatio = false,
                     FillArea = true
                 };
-                image.Quality = quality;
-
                 image.Resize(size);
                 image.Crop(size);
             }
 
+            image.Quality = quality;
+
             if (options.Contains("g")) //grayscale
                 image.Grayscale(PixelIntensityMethod.Average);
         }
-        
+
         public string GetVersion()
         {
             return MagickNET.Version;
@@ -101,7 +110,7 @@ namespace ImageServer.Core.Services
         }
 
         public List<MagickFormatInfo> GetSupportedFormats()
-        {            
+        {
             return MagickNET.SupportedFormats.ToList();
         }
     }
