@@ -1,11 +1,27 @@
-using Microsoft.AspNetCore.Routing.Constraints;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace ImageServer.Core.Route
 {
-    public class GridFsRouteConstraint : RegexRouteConstraint
+    public class GridFsRouteConstraint : IRouteConstraint
     {
-        public GridFsRouteConstraint() : base(@"([0-9a-fA-F]{24})")
+        public bool Match(HttpContext httpContext, IRouter route, string routeKey, RouteValueDictionary values,
+            RouteDirection routeDirection)
         {
+            string val = values[routeKey] as string;
+            if (string.IsNullOrWhiteSpace(val) || val.Length != 24) //gridfs id is 24 char.
+                return false;
+
+            Regex regex = new Regex(@"([0-9a-fA-F]{24})");
+            Match match = regex.Match(val);
+            if (match.Success)
+            {
+                return true;
+            }
+
+            return false;            
         }
+
     }
 }

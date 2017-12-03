@@ -23,7 +23,7 @@ namespace ImageServer.Core.Controllers
         }
 
         [HttpGet("/f/{slug}/{id:gridfs}.{ext}")]
-        [HttpGet("/f/{slug}/{id:filepath}")]
+        [HttpGet("/f/{slug}/{*id}")]
         public async Task<IActionResult> FileAsync(string slug, string id)
         {
             byte[] bytes;
