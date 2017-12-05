@@ -6,3 +6,5 @@ ImageServer.Core/obj/
 ImageServer.Core/ImageServer.Core.user
 ImageServer.Tests/bin/
 ImageServer.Tests/obj/
+ImageServer.Integration.Tests/obj/
+ImageServer.Integration.Tests/bin/
