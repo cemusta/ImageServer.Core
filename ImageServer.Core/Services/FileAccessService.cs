@@ -3,19 +3,26 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ImageServer.Core.Model;
 using ImageServer.Core.Services.FileAccess;
+using Microsoft.Extensions.Options;
 
 namespace ImageServer.Core.Services
 {
     public class FileAccessService: IFileAccessService
     {
-        public async Task<byte[]> GetFileAsync(string slug, string file, List<HostConfig> hosts)
+        private readonly List<HostConfig> _hosts;
+
+        public FileAccessService(IOptions<List<HostConfig>> hosts)
         {
-            var host = hosts.Find(x => x.Slug == slug);
+            _hosts = hosts.Value;
+        }
+
+        public async Task<byte[]> GetFileAsync(string slug, string file)
+        {
+            var host = _hosts.Find(x => x.Slug == slug);
 
             if (host == null)
             {
-                //todo log: warning, null host request.
-                return null;
+                throw new Exception($"Unknown host slug requested: {slug}");
             }
 
             var access = GetAccess(host.Type);
@@ -23,7 +30,7 @@ namespace ImageServer.Core.Services
             return await access.GetFileAsync(host, file);
         }
 
-        public IFileAccessStrategy GetAccess(HostType hostType)
+        private IFileAccessStrategy GetAccess(HostType hostType)
         {
             switch (hostType)
             {
