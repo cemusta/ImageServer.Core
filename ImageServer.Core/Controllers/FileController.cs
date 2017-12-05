@@ -1,35 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using ImageServer.Core.Model;
 using ImageServer.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace ImageServer.Core.Controllers
 {
     public class FileController : Controller
     {
-        readonly List<HostConfig> _hosts;
-        readonly IFileAccessService _file;
-        readonly ILogger _logger;
+        private readonly IFileAccessService _file;
+        private readonly ILogger<FileController> _logger;
 
-        public FileController(IOptions<List<HostConfig>> hosts, IFileAccessService fileService, ILogger<FileController> logger)
+        public FileController(IFileAccessService fileService, ILogger<FileController> logger)
         {
-            _hosts = hosts.Value;
             _file = fileService;
             _logger = logger;
         }
 
-        [HttpGet("/f/{slug}/{id:gridfs}.{ext}")]
-        [HttpGet("/f/{slug}/{*id}")]
-        public async Task<IActionResult> FileAsync(string slug, string id)
+        [HttpGet("/f/{host}/{id:gridfs}.{ext}")]
+        [HttpGet("/f/{host}/{*id}")]
+        public async Task<IActionResult> FileAsync(string host, string id)
         {
             byte[] bytes;
             try
             {
-                bytes = await _file.GetFileAsync(slug, id, _hosts);
+                bytes = await _file.GetFileAsync(host, id);
             }
             catch (Exception e)
             {

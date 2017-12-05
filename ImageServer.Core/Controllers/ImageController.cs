@@ -1,43 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using ImageServer.Core.Model;
 using ImageServer.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace ImageServer.Core.Controllers
 {
     public class ImageController : Controller
     {
-        readonly List<HostConfig> _hosts;
-        readonly IFileAccessService _fileService;
-        readonly IImageService _imageService;
-        readonly ILogger _logger;
+        private readonly IFileAccessService _fileService;
+        private readonly IImageService _imageService;
+        private readonly ILogger<ImageController> _logger;
 
-        public ImageController(IOptions<List<HostConfig>> hosts, IFileAccessService fileServiceService, IImageService imageService, ILogger<ImageController> logger)
+        public ImageController( IFileAccessService fileServiceService, IImageService imageService, ILogger<ImageController> logger)
         {
-            _hosts = hosts.Value;
             _fileService = fileServiceService;
             _imageService = imageService;
             _logger = logger;
         }
 
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:gridfs}")]
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{id:gridfs}")]
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{*id}")]
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{*id}")]
-        public async Task<IActionResult> ImageAsync(string id, string slug, int w, int h, int quality, string options = "")
+        [HttpGet("/i/{host}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:gridfs}")]
+        [HttpGet("/i/{host}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{id:gridfs}")]
+        [HttpGet("/i/{host}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{*id}")]
+        [HttpGet("/i/{host}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{*id}")]
+        public async Task<IActionResult> ImageAsync(string id, string host, int w, int h, int quality, string options = "")
         {
-            return await ImageResult(id, slug, w, h, quality, options);
+            return await ImageResult(id, host, w, h, quality, options);
         }
 
-        [HttpGet("/i/{slug}/{*filepath}")]
-        public async Task<IActionResult> ImageFromFilePathAsync(string filepath, string slug)
+        [HttpGet("/i/{host}/{*filepath}")]
+        public async Task<IActionResult> ImageFromFilePathAsync(string filepath, string host)
         {
-            return await ImageResult(filepath, slug);
+            return await ImageResult(filepath, host);
         }
 
         private async Task<IActionResult> ImageResult(string id, string slug, int w = 0, int h = 0, int quality = 100, string options = "")
@@ -45,7 +40,7 @@ namespace ImageServer.Core.Controllers
             byte[] bytes;
             try
             {
-                bytes = await _fileService.GetFileAsync(slug, id, _hosts);
+                bytes = await _fileService.GetFileAsync(slug, id);
             }
             catch (Exception e)
             {
