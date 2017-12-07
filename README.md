@@ -16,8 +16,8 @@ At least one host configuration should be defined appsettings.json or webserver 
 
 /status and /ver endpoints can be used to check alive status and version of libraries used.
 ```
-5000/status
-5000/ver
+/status
+/ver
 ```
 
 /i/ endpoint is used for image operations, has 4 different usage:
