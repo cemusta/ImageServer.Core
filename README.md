@@ -8,18 +8,34 @@ Can read image files from Mongo GridFS, File System or web url.
 
 Setting up the project is pretty straight thru. There is no external configuration necessary except the host setup. See deployment for notes on how to deploy the project on a live system.
 
+When started as self hosted, project starts listening on ports 5000 and 5001. 
+
+At least one host configuration should be defined appsettings.json or webserver will not answer image or file endpoints.
+
+## Usage
+
+/status and /ver endpoints can be used to check alive status and version of libraries used.
+```
+5000/status
+5000/ver
+```
+
+/i/ endpoint is used for image operations, has 4 different usage:
+```
+/i/{host}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:gridfs}
+/i/{host}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{id:gridfs}
+/i/{host}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{*id}
+/i/{host}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{*id}
+```
+/f/ endpoint is used for file download operations:
+```
+/f/{host}/{id:gridfs}.{ext}
+/f/{host}/{*id}
+```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-### Prerequisites
-
--TBD-
-
-### Installing
-
--TBD-
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## Deployment
 
