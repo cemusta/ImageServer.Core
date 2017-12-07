@@ -22,7 +22,7 @@ namespace ImageServer.Core.Services
 
             if (host == null)
             {
-                throw new Exception($"Unknown host slug requested: {slug}");
+                throw new SlugNotFoundException($"Unknown host slug requested: {slug}");
             }
 
             var access = GetAccess(host.Type);
@@ -44,6 +44,13 @@ namespace ImageServer.Core.Services
                     //todo log: error!, null host type.
                     throw new NotImplementedException(hostType.ToString());
             }
+        }
+    }
+
+    public class SlugNotFoundException : Exception
+    {
+        public SlugNotFoundException(string message) : base(message)
+        {
         }
     }
 }

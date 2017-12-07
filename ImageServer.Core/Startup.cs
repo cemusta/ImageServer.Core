@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog;
 using NLog.Extensions.Logging;
 using NLog.Web;
 
@@ -69,14 +70,15 @@ namespace ImageServer.Core
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.UseMvc();
-
             //add NLog to ASP.NET Core
             loggerFactory.AddNLog();
 
             //add NLog.Web
             app.AddNLogWeb();
 
+            LogManager.Configuration.Variables["tcpAddress"] = $"{Configuration["Logging:tcpAddress"]}";
+
+            app.UseMvc();
         }
     }
 }

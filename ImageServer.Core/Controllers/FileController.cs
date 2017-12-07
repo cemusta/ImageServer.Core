@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using ImageServer.Core.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,11 @@ namespace ImageServer.Core.Controllers
             try
             {
                 bytes = await _file.GetFileAsync(host, id);
+            }
+            catch (SlugNotFoundException e)
+            {
+                _logger.LogError(1000, e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.BadRequest);
             }
             catch (Exception e)
             {

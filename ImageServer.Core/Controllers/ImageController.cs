@@ -42,6 +42,11 @@ namespace ImageServer.Core.Controllers
             {
                 bytes = await _fileService.GetFileAsync(slug, id);
             }
+            catch (SlugNotFoundException e)
+            {
+                _logger.LogError(1000, e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+            }
             catch (Exception e)
             {
                 _logger.LogError(1000, e.Message);
