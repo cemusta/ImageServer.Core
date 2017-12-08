@@ -51,6 +51,8 @@ namespace ImageServer.Core
 
             services.AddSingleton<IConfiguration>(Configuration);
 
+            services.AddMemoryCache();
+
             var hosts = Configuration.GetSection("Hosts");
             services.Configure<List<HostConfig>>(hosts);
 

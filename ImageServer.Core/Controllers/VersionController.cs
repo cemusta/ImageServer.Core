@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ImageServer.Core.Model;
 using ImageServer.Core.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -16,58 +18,81 @@ namespace ImageServer.Core.Controllers
         private readonly IImageService _imageService;
         private readonly ILogger<VersionController> _logger;
         private readonly List<HostConfig> _hosts;
+        private readonly IMemoryCache _cache;
 
 
-        public VersionController(IConfiguration iconfiguration, IImageService imageService, ILogger<VersionController> logger, IOptions<List<HostConfig>> hosts)
+        public VersionController(IConfiguration iconfiguration, IImageService imageService, ILogger<VersionController> logger, IOptions<List<HostConfig>> hosts, IMemoryCache memoryCache)
         {
             _iconfiguration = iconfiguration;
             _imageService = imageService;
             _logger = logger;
             _hosts = hosts.Value;
+            _cache = memoryCache;
         }
 
         // GET status
         [Route("/status")]
         [HttpGet]
-        public JsonResult Status()
+        public async Task<IActionResult> Status()
         {
-            _logger.LogInformation("Status requested");
+            var cacheEntry = await
+                _cache.GetOrCreateAsync("ver:status", entry =>
+                {
+                    _logger.LogInformation("Status requested and cached.");
 
-            return Json(new { Status = "ok" });
+                    return Task.FromResult(new { Status = "ok" });
+                });
+
+            return Json(cacheEntry);
         }
 
         [HttpGet("/ver")]
         [HttpGet("/version")]
-        public JsonResult ReturnVersion()
+        public async Task<IActionResult> ReturnVersion()
         {
-            _logger.LogInformation("Version requested");
-            
-            var verName = _iconfiguration["App:VersionName"] ?? "unknown";
-            var build = _iconfiguration["App:Build"] ?? "unknown";
-            var magickNet = new { version = _imageService.GetVersion(), features = _imageService.GetFeatures() };
+            var cacheEntry = await
+                _cache.GetOrCreateAsync("ver:version", entry =>
+                {
+                    _logger.LogInformation("Version requested and cached.");
 
-            return Json(new { version=$"{build} aka {verName}", magickNet });
+                    var verName = _iconfiguration["App:VersionName"] ?? "unknown";
+                    var build = _iconfiguration["App:Build"] ?? "unknown";
+                    var magickNet = new { version = _imageService.GetVersion(), features = _imageService.GetFeatures() };
+
+                    return Task.FromResult(new { version = $"{build} aka {verName}", magickNet });
+                });
+
+            return Json(cacheEntry);
         }
 
 
         [HttpGet("/formats")]
-        public JsonResult ReturnImageFormats()
+        public async Task<IActionResult> ReturnImageFormats()
         {
-            _logger.LogInformation("Formats requested");
+            var cacheEntry = await
+                _cache.GetOrCreateAsync("ver:formats", entry =>
+                {
+                    _logger.LogInformation("Formats requested and cached.");
 
-            var magickNet = new { formats = _imageService.GetSupportedFormats() };
+                    var magickNet = new { formats = _imageService.GetSupportedFormats() };
+                    return Task.FromResult(magickNet);
+                });
 
-            return Json(new { magickNet });
+            return Json(cacheEntry);
         }
 
         [HttpGet("/hosts")]
-        public JsonResult ReturnImageHosts()
+        public async Task<IActionResult> ReturnImageHosts()
         {
-            _logger.LogInformation("Hosts requested");
+            var cacheEntry = await
+                _cache.GetOrCreateAsync("ver:hosts", entry =>
+                {                    
+                    _logger.LogInformation("Hosts requested and cached.");
+                    var hosts = _hosts.Select(x => $"{x.Slug} ({x.Type})");
+                    return Task.FromResult(hosts) ;
+                });
 
-            var hosts = _hosts.Select(x => $"{x.Slug} ({x.Type})");
-
-            return Json(new { hosts });
+            return Json(cacheEntry);
         }
 
 
