@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ImageServer.Core.Middleware;
 using ImageServer.Core.Model;
 using ImageServer.Core.Route;
 using ImageServer.Core.Services;
@@ -79,6 +80,10 @@ namespace ImageServer.Core
             app.AddNLogWeb();
 
             LogManager.Configuration.Variables["tcpAddress"] = $"{Configuration["Logging:tcpAddress"]}";
+
+            app.UsePerformanceCounter();
+
+            app.UseRequestFixer();
 
             app.UseMvc();
             
