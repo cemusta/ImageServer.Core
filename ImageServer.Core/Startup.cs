@@ -12,14 +12,17 @@ using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Extensions.Logging;
 using NLog.Web;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace ImageServer.Core
 {
     public class Startup
     {
         public IConfigurationRoot Configuration { get; }
-        
-        public Startup(IHostingEnvironment env, ILogger<Startup> logger)
+
+        private ILogger _logger;
+
+        public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -32,13 +35,10 @@ namespace ImageServer.Core
             {
                 builder.AddUserSecrets("local");
             }
-            
+
             env.ConfigureNLog("nlog.config");
-
-
-            logger.LogInformation("Application started...");
         }
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -56,7 +56,7 @@ namespace ImageServer.Core
             var hosts = Configuration.GetSection("Hosts");
             services.Configure<List<HostConfig>>(hosts);
 
-            services.AddTransient<IFileAccessService,FileAccessService>();
+            services.AddTransient<IFileAccessService, FileAccessService>();
             services.AddTransient<IImageService, ImageService>();
 
             services.Configure<RouteOptions>(options =>
@@ -70,7 +70,7 @@ namespace ImageServer.Core
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime, ILoggerFactory loggerFactory)
         {
             //add NLog to ASP.NET Core
             loggerFactory.AddNLog();
@@ -81,6 +81,26 @@ namespace ImageServer.Core
             LogManager.Configuration.Variables["tcpAddress"] = $"{Configuration["Logging:tcpAddress"]}";
 
             app.UseMvc();
+            
+            appLifetime.ApplicationStarted.Register(OnStarted);
+            appLifetime.ApplicationStopping.Register(OnStopping);
+            appLifetime.ApplicationStopped.Register(OnStopped);
+
+            _logger = loggerFactory.CreateLogger("StartupLogger");
+        }
+
+        private void OnStarted()
+        {
+            _logger.LogInformation("Application started...");
+        }
+        private void OnStopping()
+        {
+            _logger.LogInformation("Application stopping...");
+        }
+
+        private void OnStopped()
+        {
+            _logger.LogInformation("Application stopped...");
         }
     }
 }
