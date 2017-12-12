@@ -24,6 +24,10 @@ namespace ImageServer.Core.Services.FileAccess
                     return null;
                 bytes = await bucket.DownloadAsBytesAsync(ob);
             }
+            catch (ArgumentException ex)
+            {
+                throw new GridFsObjectIdException(ex.Message);
+            }
             catch (Exception ex)
             {
                 if (ex is GridFSFileNotFoundException || ex is IndexOutOfRangeException || ex is ArgumentNullException)

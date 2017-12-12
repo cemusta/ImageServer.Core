@@ -29,18 +29,23 @@ namespace ImageServer.Core.Controllers
             }
             catch (SlugNotFoundException e)
             {
-                _logger.LogError(1000, e.Message);
+                _logger.LogError(e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+            }
+            catch (GridFsObjectIdException e)
+            {
+                _logger.LogError("GridFS ObjectId Parse Error:" + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.BadRequest);
             }
             catch (Exception e)
             {
-                _logger.LogError(1000, e.Message);
+                _logger.LogError(e.Message);
                 throw;
             }
 
             if (bytes == null)
             {
-                _logger.LogError(1000, "File not found");
+                _logger.LogError("File not found");
                 return NotFound();
             }
 

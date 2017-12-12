@@ -27,7 +27,7 @@ namespace ImageServer.Core.Middleware
 
             sw.Stop();
             if (sw.ElapsedMilliseconds > 10000)
-                _logger.LogWarning($"Progress took long: {sw.ElapsedMilliseconds}ms");
+                _logger.LogError($"Progress took long: {sw.ElapsedMilliseconds}ms");
             else if (sw.ElapsedMilliseconds > 5000)
                 _logger.LogWarning($"Progress took long: {sw.ElapsedMilliseconds}ms");
             else if(sw.ElapsedMilliseconds > 1000)
