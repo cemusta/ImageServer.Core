@@ -28,6 +28,10 @@ namespace ImageServer.Core.Services.FileAccess
             {
                 throw new GridFsObjectIdException(ex.Message);
             }
+            catch (FormatException ex)
+            {
+                throw new GridFsObjectIdException(ex.Message);
+            }
             catch (Exception ex)
             {
                 if (ex is GridFSFileNotFoundException || ex is IndexOutOfRangeException || ex is ArgumentNullException)
