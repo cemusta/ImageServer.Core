@@ -37,6 +37,12 @@ namespace ImageServer.Core.Controllers
 
         private async Task<IActionResult> ImageResult(string id, string slug, int w = 0, int h = 0, int quality = 100, string options = "")
         {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                _logger.LogError("Id is null");
+                return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+            }
+
             byte[] bytes;
             try
             {

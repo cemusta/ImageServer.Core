@@ -9,12 +9,12 @@ namespace ImageServer.Core.Controllers
 {
     public class FileController : Controller
     {
-        private readonly IFileAccessService _file;
+        private readonly IFileAccessService _fileService;
         private readonly ILogger<FileController> _logger;
 
         public FileController(IFileAccessService fileService, ILogger<FileController> logger)
         {
-            _file = fileService;
+            _fileService = fileService;
             _logger = logger;
         }
 
@@ -22,10 +22,16 @@ namespace ImageServer.Core.Controllers
         [HttpGet("/f/{host}/{*id}")]
         public async Task<IActionResult> FileAsync(string host, string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                _logger.LogError("Id is null");
+                return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+            }
+
             byte[] bytes;
             try
             {
-                bytes = await _file.GetFileAsync(host, id);
+                bytes = await _fileService.GetFileAsync(host, id);
             }
             catch (SlugNotFoundException e)
             {
