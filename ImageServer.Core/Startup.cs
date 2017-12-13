@@ -66,8 +66,6 @@ namespace ImageServer.Core
                 options.ConstraintMap.Add("opt", typeof(OptionsRouteConstraint)));
             services.Configure<RouteOptions>(options =>
                 options.ConstraintMap.Add("filepath", typeof(FilePathRouteConstraint)));
-            services.Configure<RouteOptions>(options =>
-                options.ConstraintMap.Add("slug", typeof(SlugRouteConstraint)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

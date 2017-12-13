@@ -15,24 +15,19 @@ namespace ImageServer.Integration.Tests
             Context = context;
         }
 
-        [Fact]
-        public async Task StatusReturnsOkResponse()
+        [Theory]
+        [InlineData("/status", HttpStatusCode.OK)]
+        [InlineData("/ver", HttpStatusCode.OK)]
+        [InlineData("/version", HttpStatusCode.OK)]
+        [InlineData("/formats", HttpStatusCode.OK)]
+        [InlineData("/hosts", HttpStatusCode.OK)]
+        [InlineData("/unkown", HttpStatusCode.NotFound)]
+        public async Task StatusReturnsOkResponse(string url, HttpStatusCode code)
         {
-            var response = await Context.Client.GetAsync("/status");
+            var response = await Context.Client.GetAsync(url);            
 
-            response.EnsureSuccessStatusCode();
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(code);
         }
 
-        [Fact]
-        public async Task VersionReturnsOkResponse()
-        {
-            var response = await Context.Client.GetAsync("/ver");
-
-            response.EnsureSuccessStatusCode();
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
     }
 }
