@@ -68,11 +68,14 @@ namespace ImageServer.Core.Services
         {
             if (info.Width == w && info.Height == h) //requested image is same size
             {
+                return;
             }
-            else if (w == 0 && h == 0) //requested image is same size
+            if (w == 0 && h == 0) //requested image is same size
             {
+                return;
             }
-            else if (options.Contains("f") || options.Contains("t")) //scale with aspect of image
+
+            if (options.Contains("f") || options.Contains("t")) //scale with aspect of image
             {
                 MagickGeometry size = new MagickGeometry(w, h);
                 image.Thumbnail(size);
@@ -87,10 +90,11 @@ namespace ImageServer.Core.Services
                 MagickGeometry size = new MagickGeometry(w, h)
                 {
                     IgnoreAspectRatio = false,
-                    FillArea = true
+                    FillArea = true,
+                    
                 };
                 image.Resize(size);
-                image.Crop(size);
+                image.Crop(size,Gravity.Center);
             }
 
             image.Quality = quality;
