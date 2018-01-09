@@ -86,10 +86,10 @@ namespace ImageServer.Core.Controllers
         {
             var cacheEntry = await
                 _cache.GetOrCreateAsync("ver:hosts", entry =>
-                {                    
+                {
                     _logger.LogInformation("Hosts requested and cached.");
                     var hosts = _hosts.Select(x => $"{x.Slug} ({x.Type})");
-                    return Task.FromResult(hosts) ;
+                    return Task.FromResult(hosts);
                 });
 
             return Json(cacheEntry);

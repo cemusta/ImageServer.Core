@@ -91,10 +91,10 @@ namespace ImageServer.Core.Services
                 {
                     IgnoreAspectRatio = false,
                     FillArea = true,
-                    
+
                 };
                 image.Resize(size);
-                image.Crop(size,Gravity.Center);
+                image.Crop(size, Gravity.Center);
             }
 
             image.Quality = quality;

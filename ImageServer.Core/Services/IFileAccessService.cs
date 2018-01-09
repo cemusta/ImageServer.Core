@@ -1,9 +1,12 @@
 ﻿using System.Threading.Tasks;
+using ImageServer.Core.Model;
 
 namespace ImageServer.Core.Services
 {
     public interface IFileAccessService
     {
-        Task<byte[]> GetFileAsync(string slug, string file);
+        HostConfig GetHostConfig(string slug);
+
+        Task<byte[]> GetFileAsync(HostConfig host, string file);
     }
 }

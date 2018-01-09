@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace ImageServer.Core.Services
 {
-    public class FileAccessService: IFileAccessService
+    public class FileAccessService : IFileAccessService
     {
         private readonly List<HostConfig> _hosts;
 
@@ -16,7 +16,7 @@ namespace ImageServer.Core.Services
             _hosts = hosts.Value;
         }
 
-        public async Task<byte[]> GetFileAsync(string slug, string file)
+        public HostConfig GetHostConfig(string slug)
         {
             var host = _hosts.Find(x => x.Slug == slug);
 
@@ -25,9 +25,14 @@ namespace ImageServer.Core.Services
                 throw new SlugNotFoundException($"Unknown host slug requested: {slug}");
             }
 
-            var access = GetAccess(host.Type);
+            return host;
+        }
 
-            return await access.GetFileAsync(host, file);
+        public async Task<byte[]> GetFileAsync(HostConfig hostConfig, string file)
+        {
+            var access = GetAccess(hostConfig.Type);
+
+            return await access.GetFileAsync(hostConfig, file);
         }
 
         private IFileAccessStrategy GetAccess(HostType hostType)
@@ -41,7 +46,6 @@ namespace ImageServer.Core.Services
                 case HostType.Web:
                     return new WebAccess();
                 default:
-                    //todo log: error!, null host type.
                     throw new NotImplementedException(hostType.ToString());
             }
         }

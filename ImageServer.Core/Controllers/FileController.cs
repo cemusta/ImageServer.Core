@@ -18,9 +18,9 @@ namespace ImageServer.Core.Controllers
             _logger = logger;
         }
 
-        [HttpGet("/f/{host}/{id:gridfs}.{ext}")]
-        [HttpGet("/f/{host}/{*id}")]
-        public async Task<IActionResult> FileAsync(string host, string id)
+        [HttpGet("/f/{slug}/{id:gridfs}.{ext}")]
+        [HttpGet("/f/{slug}/{*id}")]
+        public async Task<IActionResult> FileAsync(string id, string slug)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -31,6 +31,7 @@ namespace ImageServer.Core.Controllers
             byte[] bytes;
             try
             {
+                var host = _fileService.GetHostConfig(slug);
                 bytes = await _fileService.GetFileAsync(host, id);
             }
             catch (SlugNotFoundException e)
