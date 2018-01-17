@@ -68,8 +68,5 @@ namespace ImageServer.Tests
             // Assert
             Assert.Equal(expected, actual);
         }
-
-        //   /i/hurriyettest/75/900x0/59ca30e46d7745217caa2511.jpg 
-
     }
 }
