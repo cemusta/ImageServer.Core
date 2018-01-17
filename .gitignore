@@ -8,3 +8,5 @@ ImageServer.Tests/bin/
 ImageServer.Tests/obj/
 ImageServer.Integration.Tests/obj/
 ImageServer.Integration.Tests/bin/
+
+*.log
