@@ -81,7 +81,7 @@ namespace ImageServer.Core
 
             app.UsePerformanceCounter();
 
-            app.UseRequestFixer();
+            app.UseRequestFixer();            
 
             app.UseMvc();
             

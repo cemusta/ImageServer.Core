@@ -13,7 +13,7 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q16-x64" Version="7.3.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.3.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Rewrite" Version="2.0.1" />
@@ -47,6 +47,9 @@
     <TypeScriptSourceMap>True</TypeScriptSourceMap>
     <TypeScriptMapRoot />
     <TypeScriptSourceRoot />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
 </Project>

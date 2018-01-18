@@ -24,7 +24,6 @@ namespace ImageServer.Core.Middleware
             
             await _next.Invoke(context);
 
-
             sw.Stop();
             if (sw.ElapsedMilliseconds > 10000)
                 _logger.LogError($"Progress took long: {sw.ElapsedMilliseconds}ms");
