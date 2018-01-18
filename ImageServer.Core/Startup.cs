@@ -43,7 +43,6 @@ namespace ImageServer.Core
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             //call this in case you need aspnet-user-authtype/aspnet-user-identity - nlog kullanıyor
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -58,6 +57,7 @@ namespace ImageServer.Core
             services.Configure<List<HostConfig>>(hosts);
 
             services.AddTransient<IFileAccessService, FileAccessService>();
+            services.AddTransient<IFileMetadataService, FileMetadataService>();
             services.AddTransient<IImageService, ImageService>();
 
             services.Configure<RouteOptions>(options =>
@@ -66,6 +66,8 @@ namespace ImageServer.Core
                 options.ConstraintMap.Add("opt", typeof(OptionsRouteConstraint)));
             services.Configure<RouteOptions>(options =>
                 options.ConstraintMap.Add("filepath", typeof(FilePathRouteConstraint)));
+            services.Configure<RouteOptions>(options =>
+                options.ConstraintMap.Add("metahash", typeof(MetaHashRouteConstraint)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

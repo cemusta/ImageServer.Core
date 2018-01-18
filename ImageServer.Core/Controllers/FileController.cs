@@ -30,9 +30,8 @@ namespace ImageServer.Core.Controllers
 
             byte[] bytes;
             try
-            {
-                var host = _fileService.GetHostConfig(slug);
-                bytes = await _fileService.GetFileAsync(host, id);
+            {                
+                bytes = await _fileService.GetFileAsync(slug, id);
             }
             catch (SlugNotFoundException e)
             {

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace ImageServer.Core.Route
 {
-    public class FilePathRouteConstraint : IRouteConstraint
+    public class MetaHashRouteConstraint : IRouteConstraint
     {
         public bool Match(HttpContext httpContext, IRouter route, string routeKey, RouteValueDictionary values,
             RouteDirection routeDirection)
@@ -13,7 +13,7 @@ namespace ImageServer.Core.Route
             if (string.IsNullOrWhiteSpace(val)) 
                 return false;
 
-            Regex regex = new Regex(@"(.+)");
+            Regex regex = new Regex(@"h-[a-z0-9]{32}$");
             Match match = regex.Match(val);
             return match.Success;
         }

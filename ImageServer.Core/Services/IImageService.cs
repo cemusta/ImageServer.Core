@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using ImageMagick;
+using ImageServer.Core.Model;
 
 namespace ImageServer.Core.Services
 {
     public interface IImageService
     {
-        byte[] GetImageAsBytes(int w, int h, int quality, byte[] bytes, string options, out string mimeType);
+        byte[] GetImageAsBytes(int w, int h, int quality, byte[] bytes, string options, out string mimeType, CustomRatio ratio = null);
 
         string GetVersion();
 

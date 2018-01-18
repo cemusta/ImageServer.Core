@@ -2,28 +2,38 @@
 using System.Threading.Tasks;
 using ImageServer.Core.Model;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 
-namespace ImageServer.Core.Services.FileAccess
+namespace ImageServer.Core.Services.FileMetadata
 {
-    public class GridFsAccess: IFileAccessStrategy
+    public class GridFsMetadata : IFileMetadataStrategy
     {
-
-        public async Task<byte[]> GetFileAsync(HostConfig host, string file)
+        public async Task<Model.FileMetadata> GetFileMetadata(HostConfig host, string file)
         {
             int index = file.LastIndexOf('.');
             file = index == -1 ? file : file.Substring(0, index); //remove extension if any
 
             IGridFSBucket bucket = GetBucket(host);
-            byte[] bytes;
+
             try
             {
                 var ob = new ObjectId(file);
                 if (ob == ObjectId.Empty)
                     return null;
 
-                bytes = await bucket.DownloadAsBytesAsync(ob);
+                var filter = Builders<GridFSFileInfo>.Filter.Eq("_id", ob);
+                var findOptions = new GridFSFindOptions
+                {
+                    Limit = 1
+                };
+
+                var fi = await bucket.FindAsync(filter, findOptions);
+
+                var metadata =  BsonSerializer.Deserialize<Model.FileMetadata>(fi.FirstOrDefault().Metadata);
+
+                return metadata;
             }
             catch (ArgumentException ex)
             {
@@ -43,18 +53,17 @@ namespace ImageServer.Core.Services.FileAccess
                 //log other errors....
                 throw;
             }
-
-            return bytes;
         }
 
         private GridFSBucket GetBucket(HostConfig host)
         {
             var client = new MongoClient(host.ConnectionString);
 
-            var database = client.GetDatabase(host.DatabaseName);           
+            var database = client.GetDatabase(host.DatabaseName);
 
             var bucket = new GridFSBucket(database);
             return bucket;
         }
+
     }
 }

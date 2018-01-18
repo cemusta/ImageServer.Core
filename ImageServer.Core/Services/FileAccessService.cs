@@ -29,14 +29,20 @@ namespace ImageServer.Core.Services
             return host;
         }
 
-        public async Task<byte[]> GetFileAsync(HostConfig hostConfig, string file)
+        public async Task<byte[]> GetFileAsync(string slug, string file)
         {
-            var access = GetAccess(hostConfig.Type);
+            var host = _hosts.Find(x => x.Slug == slug);
+            if (host == null)
+            {
+                throw new SlugNotFoundException($"Unknown host slug requested: {slug}");
+            }
 
-            return await access.GetFileAsync(hostConfig, file);
+            var access = GetAccess(host.Type);
+
+            return await access.GetFileAsync(host, file);
         }
 
-        private IFileAccessStrategy GetAccess(HostType hostType)
+        private static IFileAccessStrategy GetAccess(HostType hostType)
         {
             switch (hostType)
             {

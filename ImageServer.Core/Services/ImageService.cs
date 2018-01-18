@@ -1,12 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ImageMagick;
+using ImageServer.Core.Model;
 
 namespace ImageServer.Core.Services
 {
     public class ImageService : IImageService
     {
-        public byte[] GetImageAsBytes(int w, int h, int quality, byte[] bytes, string options, out string mimeType)
+        public byte[] GetImageAsBytes(int w, int h, int quality, byte[] bytes, string options, out string mimeType, CustomRatio ratio = null)
         {
             MagickImageInfo info = new MagickImageInfo(bytes);
 
@@ -16,13 +18,18 @@ namespace ImageServer.Core.Services
                 return ProcessGif(info, w, h, quality, bytes, options);
             }
 
-            return ProcessImage(info, w, h, quality, bytes, options, out mimeType);
+            return ProcessImage(info, w, h, quality, bytes, options, ratio, out mimeType);
         }
 
-        private static byte[] ProcessImage(MagickImageInfo info, int w, int h, int quality, byte[] bytes, string options, out string mimeType)
+        private static byte[] ProcessImage(MagickImageInfo info, int w, int h, int quality, byte[] bytes, string options, CustomRatio ratio, out string mimeType)
         {
             using (MagickImage image = new MagickImage(bytes))
             {
+                if (ratio != null)
+                {
+                    CropSingleImage(info, w, h, image);
+                }
+
                 ResizeSingleImage(info, w, h, quality, options, image);
 
                 // return the result
@@ -63,6 +70,32 @@ namespace ImageServer.Core.Services
                 return collection.ToByteArray();
             }
         }
+
+        private static void CropSingleImage(MagickImageInfo info, int w, int h, MagickImage image)
+        {
+            throw new NotImplementedException("Feature under implementation");
+
+            if (info.Width == w && info.Height == h) //requested image is same size
+            {
+                return;
+            }
+            if (w == 0 && h == 0) //requested image is same size
+            {
+                return;
+            }
+
+            MagickGeometry size = new MagickGeometry(w, h)
+            {
+                IgnoreAspectRatio = false,
+                FillArea = false
+            };
+
+            image.Resize(size);
+            image.Crop(size, Gravity.Center);
+
+            image.Quality = 100;
+        }
+
 
         private static void ResizeSingleImage(MagickImageInfo info, int w, int h, int quality, string options, MagickImage image)
         {

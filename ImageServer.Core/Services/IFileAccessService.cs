@@ -7,6 +7,6 @@ namespace ImageServer.Core.Services
     {
         HostConfig GetHostConfig(string slug);
 
-        Task<byte[]> GetFileAsync(HostConfig host, string file);
+        Task<byte[]> GetFileAsync(string slug, string file);
     }
 }
