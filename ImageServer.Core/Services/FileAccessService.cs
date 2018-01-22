@@ -13,7 +13,7 @@ namespace ImageServer.Core.Services
 
         public FileAccessService(IOptions<List<HostConfig>> hosts)
         {
-            _hosts = hosts?.Value ?? 
+            _hosts = hosts?.Value ??
                      throw new ArgumentNullException(nameof(hosts));
         }
 

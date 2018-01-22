@@ -13,7 +13,7 @@ namespace ImageServer.Core.Route
             if (string.IsNullOrWhiteSpace(val)) 
                 return false;
 
-            Regex regex = new Regex(@"h-[a-z0-9]{32}$");
+            Regex regex = new Regex(@"[a-z0-9]{32}$");
             Match match = regex.Match(val);
             return match.Success;
         }

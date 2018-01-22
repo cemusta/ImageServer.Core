@@ -27,10 +27,12 @@ namespace ImageServer.Core.Services
             {
                 if (ratio != null)
                 {
-                    CropSingleImage(info, w, h, image);
+                    CropSingleImage(info, w, h, quality, options, image, ratio);
                 }
-
-                ResizeSingleImage(info, w, h, quality, options, image);
+                else
+                {
+                    ResizeSingleImage(info, w, h, quality, options, image);
+                }
 
                 // return the result
                 if (image.HasAlpha)
@@ -71,18 +73,23 @@ namespace ImageServer.Core.Services
             }
         }
 
-        private static void CropSingleImage(MagickImageInfo info, int w, int h, MagickImage image)
+        private static void CropSingleImage(MagickImageInfo info, int w, int h, int quality, string options, MagickImage image, CustomRatio ratio)
         {
-            throw new NotImplementedException("Feature under implementation");
+            int ratioW = Math.Abs(ratio.X2 - ratio.X1);
+            int ratioH = Math.Abs(ratio.Y2 - ratio.Y1);
 
-            if (info.Width == w && info.Height == h) //requested image is same size
+            if (info.Width == ratioW && info.Height == ratioH) //requested image is same size
             {
                 return;
             }
-            if (w == 0 && h == 0) //requested image is same size
+
+            MagickGeometry cropSize = new MagickGeometry(ratioW, ratioH)
             {
-                return;
-            }
+                IgnoreAspectRatio = false,
+                FillArea = false,
+                X = ratio.X1,
+                Y = ratio.Y1
+            };
 
             MagickGeometry size = new MagickGeometry(w, h)
             {
@@ -90,12 +97,14 @@ namespace ImageServer.Core.Services
                 FillArea = false
             };
 
+            image.Crop(cropSize);
             image.Resize(size);
-            image.Crop(size, Gravity.Center);
 
-            image.Quality = 100;
+            image.Quality = quality;
+
+            if (options.Contains("g")) //grayscale
+                image.Grayscale(PixelIntensityMethod.Average);
         }
-
 
         private static void ResizeSingleImage(MagickImageInfo info, int w, int h, int quality, string options, MagickImage image)
         {

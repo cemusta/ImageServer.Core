@@ -12,7 +12,7 @@ namespace ImageServer.Core.Services.FileMetadata
     {
         public async Task<Model.FileMetadata> GetFileMetadata(HostConfig host, string file)
         {
-            int index = file.LastIndexOf('.');
+            var index = file.LastIndexOf('.');
             file = index == -1 ? file : file.Substring(0, index); //remove extension if any
 
             IGridFSBucket bucket = GetBucket(host);
@@ -31,7 +31,7 @@ namespace ImageServer.Core.Services.FileMetadata
 
                 var fi = await bucket.FindAsync(filter, findOptions);
 
-                var metadata =  BsonSerializer.Deserialize<Model.FileMetadata>(fi.FirstOrDefault().Metadata);
+                var metadata = BsonSerializer.Deserialize<Model.FileMetadata>(fi.FirstOrDefault().Metadata);
 
                 return metadata;
             }

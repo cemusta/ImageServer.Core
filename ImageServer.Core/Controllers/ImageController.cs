@@ -26,8 +26,8 @@ namespace ImageServer.Core.Controllers
 
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:gridfs}")]
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{id:gridfs}")]
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{hash:metahash}/{id:gridfs}")]
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{hash:metahash}/{id:gridfs}")]
+        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/h-{hash:metahash}/{id:gridfs}")]
+        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/h-{hash:metahash}/{id:gridfs}")]
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{*id}")]
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{*id}")]
         public async Task<IActionResult> ImageAsync(string id, string slug, int w, int h, int quality, string options = "", string hash = "")
@@ -50,38 +50,40 @@ namespace ImageServer.Core.Controllers
             }
 
             byte[] bytes;
-            CustomRatio ratio = null;
+            CustomRatio customRatio = null;
             try
             {
                 var host = _fileService.GetHostConfig(slug);
 
-                if (host.WhiteList != null && host.WhiteList.Any() && host.WhiteList.All(x => x != $"{w}x{h}"))
+                if (host.WhiteList != null && host.WhiteList.Any() && host.WhiteList.All(x => x != $"{w}x{h}")) //whitelist checking
                 {
                     _logger.LogError("Image request cancelled due to whitelist.");
                     return new StatusCodeResult((int)HttpStatusCode.BadRequest);
                 }
 
-                if (!string.IsNullOrEmpty(hash) && host.Type == HostType.GridFs)
+                if (!string.IsNullOrEmpty(hash) && host.Type == HostType.GridFs) //customratio & mongodb file
                 {
-                    hash = hash.Replace("h-", "");
                     var metadata = await _metadataService.GetFileMetadataAsync(host, id);
 
-                    ratio = metadata.CustomRatio.FirstOrDefault(x => x.Hash == hash);
+                    var ratio = (double)w / h; //image request ratio                    
 
-                    if (ratio == null)
+                    customRatio = double.IsNaN(ratio)
+                        ? metadata.CustomRatio.FirstOrDefault(x => x.Hash == hash)
+                        : metadata.CustomRatio.FirstOrDefault(x => x.MinRatio < ratio && x.MaxRatio > ratio);
+
+                    if (customRatio == null) // request with hash but no customratio
                     {
-                        _logger.LogError("Image request cancelled due to wrong custom ratio hash");
-                        return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+                        _logger.LogError("Image request redirected due to wrong custom ratio hash (redirected to base url)");
+                        return Redirect(string.IsNullOrEmpty(options)
+                            ? $"/i/{slug}/{quality}/{w}x{h}/{id}"
+                            : $"/i/{slug}/{quality}/{w}x{h}/{options}/{id}");
                     }
-
-                    if (!(w == 0 | h == 0))
+                    if (!double.IsNaN(ratio) && customRatio.Hash != hash) //hash is not correct
                     {
-                        double reqRatio = (double) w / h;
-                        if (reqRatio > ratio.MinRatio && reqRatio < ratio.MaxRatio)
-                        {
-                            _logger.LogError("Image request cancelled due to wrong ratio mismatch");
-                            return new StatusCodeResult((int)HttpStatusCode.BadRequest);
-                        }
+                        _logger.LogError("Image request redirected due to wrong custom ratio hash (redirected to new customRatio)");
+                        return Redirect(string.IsNullOrEmpty(options)
+                            ? $"/i/{slug}/{quality}/{w}x{h}/h-{customRatio.Hash}/{id}"
+                            : $"/i/{slug}/{quality}/{w}x{h}/{options}/h-{customRatio.Hash}/{id}");
                     }
                 }
 
@@ -109,7 +111,7 @@ namespace ImageServer.Core.Controllers
                 return NotFound();
             }
 
-            bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mime, ratio);
+            bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mime, customRatio);
             if (bytes == null)
             {
                 _logger.LogError(2000, "File found but image operation failed");
