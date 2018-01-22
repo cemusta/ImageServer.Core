@@ -25,12 +25,10 @@ namespace ImageServer.Tests
         }
 
         [Theory]
-        [InlineData("h-1234567890a1234567890a1234567890", true)]
-        [InlineData("h-1234567890a1234567890a12345678902", false)]    //+1 char
-        [InlineData("h-1234567890a1234567890a123456789", false)]      //-1 char 
-        [InlineData("h-1234567890a1234567890a123456789+", false)]     //illegal char (+)
-        [InlineData("1234567890a1234567890a1234567890", false)]       //without h-
-        [InlineData("1234567890a1234567890a123456789+", false)]       //without h- illegal char (+)
+        [InlineData("1234567890a1234567890a1234567890", true)]
+        [InlineData("1234567890a1234567890a12345678902", false)]    //+1 char
+        [InlineData("1234567890a1234567890a123456789", false)]      //-1 char 
+        [InlineData("1234567890a1234567890a123456789+", false)]     //illegal char (+)
         [InlineData(" ", false)]
         [InlineData(null, false)]
         public void Test_MetaHashRouteConstraint(string parameterValue, bool expected)

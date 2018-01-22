@@ -9,12 +9,12 @@ namespace ImageServer.Core.Route
         public bool Match(HttpContext httpContext, IRouter route, string routeKey, RouteValueDictionary values,
             RouteDirection routeDirection)
         {
-            string val = values[routeKey] as string;
+            var val = values[routeKey] as string;
             if (string.IsNullOrWhiteSpace(val)) 
                 return false;
 
-            Regex regex = new Regex(@"(.+)");
-            Match match = regex.Match(val);
+            var regex = new Regex(@"(.+)");
+            var match = regex.Match(val);
             return match.Success;
         }
     }

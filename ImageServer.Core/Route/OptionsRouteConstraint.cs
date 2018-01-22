@@ -8,31 +8,26 @@ namespace ImageServer.Core.Route
     {
         public bool Match(HttpContext httpContext, IRouter route, string routeKey, RouteValueDictionary values, RouteDirection routeDirection)
         {
-            string val = values[routeKey] as string;
+            var val = values[routeKey] as string;
             if (string.IsNullOrWhiteSpace(val))
                 return false;
 
-            Regex regex = new Regex(@"([tgf]{1,3})");
-            Match match = regex.Match(val);
-            if (match.Success
-                && match.Value.Length == val.Length
-                && StringHasUniqueChars(match.Value))
-            {
-                return true;
-            }
-
-            return false;
+            var regex = new Regex(@"([tgf]{1,3})");
+            var match = regex.Match(val);
+            return match.Success
+                   && match.Value.Length == val.Length
+                   && StringHasUniqueChars(match.Value);
         }
 
         bool StringHasUniqueChars(string key)
         {
-            string table = string.Empty;
+            var charTable = string.Empty;
 
-            foreach (char value in key)
+            foreach (var character in key)
             {
-                if (table.IndexOf(value) == -1)
+                if (charTable.IndexOf(character) == -1)
                 {
-                    table += value;
+                    charTable += character;
                 }
                 else
                 {
