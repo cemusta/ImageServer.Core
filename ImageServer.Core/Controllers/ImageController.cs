@@ -18,10 +18,10 @@ namespace ImageServer.Core.Controllers
 
         public ImageController(IFileAccessService fileService, IFileMetadataService metadataService, IImageService imageService, ILogger<ImageController> logger)
         {
-            _fileService = fileService;
-            _metadataService = metadataService;
-            _imageService = imageService;
-            _logger = logger;
+            _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+            _metadataService = metadataService ?? throw new ArgumentNullException(nameof(metadataService));
+            _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:gridfs}")]
@@ -69,7 +69,7 @@ namespace ImageServer.Core.Controllers
 
                     customRatio = double.IsNaN(ratio)
                         ? metadata.CustomRatio.FirstOrDefault(x => x.Hash == hash)
-                        : metadata.CustomRatio.FirstOrDefault(x => x.MinRatio < ratio && x.MaxRatio > ratio);
+                        : metadata.CustomRatio.FirstOrDefault(x => x.MinRatio < ratio && x.MaxRatio >= ratio);
 
                     if (customRatio == null) // request with hash but no customratio
                     {

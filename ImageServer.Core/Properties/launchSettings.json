@@ -19,11 +19,11 @@
     "imgsvr.core": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "ver",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:53708"
+      "applicationUrl": "http://localhost:5000"
     }
   }
 }
