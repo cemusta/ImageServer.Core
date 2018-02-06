@@ -19,6 +19,8 @@ namespace ImageServer.Core.Model
         public string Path { get; set; }
 
         public List<string> WhiteList { get; set; }
+
+        public string FallbackImage { get; set; }
     }
 
     public enum HostType

@@ -77,7 +77,7 @@ namespace ImageServer.Core.Services
             return bytes;
         }
 
-        private static void CropSingleImage(CustomRatio ratio, MagickImage image)
+        private static void CropSingleImage(CustomRatio ratio, IMagickImage image)
         {
             var cropWidth = Math.Abs(ratio.X2 - ratio.X1);
             var cropHeight = Math.Abs(ratio.Y2 - ratio.Y1);
@@ -98,7 +98,7 @@ namespace ImageServer.Core.Services
 
         }
 
-        private static void ResizeSingleImage(int requestWidth, int requestHeight, int quality, string options, MagickImage image)
+        private static void ResizeSingleImage(int requestWidth, int requestHeight, int quality, string options,  IMagickImage image)
         {
             if (image.BaseWidth == requestWidth && image.BaseHeight == requestHeight) //requested image is same size
             {

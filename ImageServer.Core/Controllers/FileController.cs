@@ -13,9 +13,9 @@ namespace ImageServer.Core.Controllers
         private readonly ILogger<FileController> _logger;
 
         public FileController(IFileAccessService fileService, ILogger<FileController> logger)
-        {
-            _fileService = fileService;
-            _logger = logger;
+        {            
+            _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet("/f/{slug}/{id:gridfs}.{ext}")]

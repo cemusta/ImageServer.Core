@@ -3,6 +3,7 @@ using ImageServer.Core.Middleware;
 using ImageServer.Core.Model;
 using ImageServer.Core.Route;
 using ImageServer.Core.Services;
+using ImageServer.Core.Services.FileAccess;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -55,6 +56,14 @@ namespace ImageServer.Core
 
             var hosts = Configuration.GetSection("Hosts");
             services.Configure<List<HostConfig>>(hosts);
+
+            var strategyDictionary = new Dictionary<HostType, IFileAccessStrategy>
+            {
+                {HostType.GridFs, new GridFsAccess()},
+                {HostType.FileSystem, new FileSystemAccess()},
+                {HostType.Web, new WebAccess()}
+            };
+            services.AddSingleton<IDictionary<HostType, IFileAccessStrategy>>(strategyDictionary);
 
             services.AddTransient<IFileAccessService, FileAccessService>();
             services.AddTransient<IFileMetadataService, FileMetadataService>();

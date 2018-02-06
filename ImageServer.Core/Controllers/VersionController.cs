@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,12 +23,12 @@ namespace ImageServer.Core.Controllers
 
 
         public VersionController(IConfiguration iconfiguration, IImageService imageService, ILogger<VersionController> logger, IOptions<List<HostConfig>> hosts, IMemoryCache memoryCache)
-        {
-            _iconfiguration = iconfiguration;
-            _imageService = imageService;
-            _logger = logger;
-            _hosts = hosts.Value;
-            _cache = memoryCache;
+        {            
+            _iconfiguration = iconfiguration ?? throw new ArgumentNullException(nameof(iconfiguration));
+            _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));            
+            _hosts = hosts.Value ?? throw new ArgumentNullException(nameof(hosts));
+            _cache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         }
 
         // GET status

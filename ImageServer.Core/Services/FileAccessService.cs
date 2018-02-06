@@ -10,11 +10,12 @@ namespace ImageServer.Core.Services
     public class FileAccessService : IFileAccessService
     {
         private readonly List<HostConfig> _hosts;
+        private readonly IDictionary<HostType, IFileAccessStrategy> _strategies;
 
-        public FileAccessService(IOptions<List<HostConfig>> hosts)
+        public FileAccessService(IOptions<List<HostConfig>> hosts, IDictionary<HostType, IFileAccessStrategy> strategies)
         {
-            _hosts = hosts?.Value ??
-                     throw new ArgumentNullException(nameof(hosts));
+            _hosts = hosts?.Value ?? throw new ArgumentNullException(nameof(hosts));
+            _strategies = strategies ?? throw new ArgumentNullException(nameof(strategies));
         }
 
         public HostConfig GetHostConfig(string slug)
@@ -37,24 +38,13 @@ namespace ImageServer.Core.Services
                 throw new SlugNotFoundException($"Unknown host slug requested: {slug}");
             }
 
-            var access = GetAccess(host.Type);
+            var access = _strategies[host.Type];
 
-            return await access.GetFileAsync(host, file);
+            var fileBytes = await access.GetFileAsync(host, file);
+
+            return fileBytes;
         }
 
-        private static IFileAccessStrategy GetAccess(HostType hostType)
-        {
-            switch (hostType)
-            {
-                case HostType.FileSystem:
-                    return new FileSystemAccess();
-                case HostType.GridFs:
-                    return new GridFsAccess();
-                case HostType.Web:
-                    return new WebAccess();
-                default:
-                    throw new NotImplementedException(hostType.ToString());
-            }
-        }
+
     }
 }

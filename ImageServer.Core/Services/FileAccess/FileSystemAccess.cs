@@ -8,9 +8,21 @@ namespace ImageServer.Core.Services.FileAccess
     {
         public async Task<byte[]> GetFileAsync(HostConfig host, string file)
         {
-            var filepath = host.Path + file;
-            var b = await File.ReadAllBytesAsync(filepath);
-            return b;
+            try
+            {
+                var filepath = host.Path + file;
+                var b = await File.ReadAllBytesAsync(filepath);
+                return b;
+            }
+            catch (FileNotFoundException)
+            {
+                if (host.FallbackImage == null) 
+                    throw;
+
+                var filepath = host.Path + host.FallbackImage;
+                var fb = await File.ReadAllBytesAsync(filepath);
+                return fb;
+            }
         }
     }
 }
