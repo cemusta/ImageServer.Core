@@ -78,6 +78,7 @@ namespace ImageServer.Core.Controllers
                             ? $"/i/{slug}/{quality}/{w}x{h}/{id}"
                             : $"/i/{slug}/{quality}/{w}x{h}/{options}/{id}");
                     }
+
                     if (!double.IsNaN(ratio) && customRatio.Hash != hash) //hash is not correct
                     {
                         _logger.LogError("Image request redirected due to wrong custom ratio hash (redirected to new customRatio)");
@@ -88,37 +89,49 @@ namespace ImageServer.Core.Controllers
                 }
 
                 bytes = await _fileService.GetFileAsync(slug, id);
+
+                if (bytes == null)
+                {
+                    _logger.LogError("File not found");
+                    return NotFound();
+                }
             }
             catch (SlugNotFoundException e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(e, e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.BadRequest);
             }
             catch (GridFsObjectIdException e)
             {
-                _logger.LogError("GridFS ObjectId Parse Error:" + e.Message);
+                _logger.LogError(e, "GridFS ObjectId Parse Error:" + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+            }
+            catch (TimeoutException e)
+            {
+                _logger.LogError(e, "Timeout: " + e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.GatewayTimeout);
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(e, e.Message);
                 throw;
             }
 
-            if (bytes == null)
+            try
             {
-                _logger.LogError("File not found");
-                return NotFound();
-            }
+                bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mime, customRatio);
 
-            bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mime, customRatio);
-            if (bytes == null)
-            {
-                _logger.LogError(2000, "File found but image operation failed");
+                if (bytes != null)
+                    return File(bytes, mime);
+
+                _logger.LogError("File found but image operation failed");
                 return StatusCode((int)HttpStatusCode.NotAcceptable);
             }
-
-            return File(bytes, mime);
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Image error: " + e.Message);
+                throw;
+            }
         }
     }
 }

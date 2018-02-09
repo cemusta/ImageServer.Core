@@ -10,15 +10,11 @@ namespace ImageServer.Core.Services
     {
         public byte[] GetImageAsBytes(int requestWidth, int requestHeight, int quality, byte[] bytes, string options, out string mimeType, CustomRatio ratio = null)
         {
-            MagickImageInfo originalImageInfo = new MagickImageInfo(bytes);
+            if (!IsGif(bytes))
+                return ProcessImage(requestWidth, requestHeight, quality, bytes, options, ratio, out mimeType);
 
-            if (originalImageInfo.Format == MagickFormat.Gif || originalImageInfo.Format == MagickFormat.Gif87)
-            {
-                mimeType = "image/gif";
-                return ProcessGif(requestWidth, requestHeight, quality, bytes, options);
-            }
-
-            return ProcessImage(requestWidth, requestHeight, quality, bytes, options, ratio, out mimeType);
+            mimeType = "image/gif";
+            return ProcessGif(requestWidth, requestHeight, quality, bytes, options);
         }
 
         private static byte[] ProcessGif(int requestWidth, int requestHeight, int quality, byte[] bytes, string options)
@@ -151,6 +147,12 @@ namespace ImageServer.Core.Services
         public List<MagickFormatInfo> GetSupportedFormats()
         {
             return MagickNET.SupportedFormats.ToList();
+        }
+
+        public bool IsGif(Byte[] bytes)
+        {
+            MagickImageInfo imageInfo = new MagickImageInfo(bytes);
+            return imageInfo.Format == MagickFormat.Gif || imageInfo.Format == MagickFormat.Gif87;
         }
     }
 }

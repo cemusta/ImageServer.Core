@@ -13,7 +13,7 @@ namespace ImageServer.Core.Controllers
         private readonly ILogger<FileController> _logger;
 
         public FileController(IFileAccessService fileService, ILogger<FileController> logger)
-        {            
+        {
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -22,40 +22,44 @@ namespace ImageServer.Core.Controllers
         [HttpGet("/f/{slug}/{*id}")]
         public async Task<IActionResult> FileAsync(string id, string slug)
         {
+            byte[] bytes;
+
             if (string.IsNullOrWhiteSpace(id))
             {
                 _logger.LogError("Id is null");
                 return new StatusCodeResult((int)HttpStatusCode.BadRequest);
             }
 
-            byte[] bytes;
             try
-            {                
+            {
                 bytes = await _fileService.GetFileAsync(slug, id);
             }
             catch (SlugNotFoundException e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(e, e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.BadRequest);
             }
             catch (GridFsObjectIdException e)
             {
-                _logger.LogError("GridFS ObjectId Parse Error:" + e.Message);
+                _logger.LogError(e, "GridFS ObjectId Parse Error:" + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+            }
+            catch (TimeoutException e)
+            {
+                _logger.LogError(e, "Timeout: " + e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.GatewayTimeout);
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(e, e.Message);
                 throw;
             }
 
-            if (bytes == null)
-            {
-                _logger.LogError("File not found");
-                return NotFound();
-            }
+            if (bytes != null)
+                return File(bytes, "application/octet-stream");
 
-            return File(bytes, "application/octet-stream");
+            _logger.LogError("File not found");
+            return NotFound();
         }
     }
 }
