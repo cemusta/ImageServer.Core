@@ -16,12 +16,10 @@ namespace ImageServer.Core.Services.FileAccess
             }
             catch (FileNotFoundException)
             {
-                if (host.FallbackImage == null) 
+                if (host.FallbackImage == null)
                     throw;
 
-                var filepath = host.Path + host.FallbackImage;
-                var fb = await File.ReadAllBytesAsync(filepath);
-                return fb;
+                throw new RedirectToFallbackException(host.FallbackImage, "Image not found, redirect to fallback");
             }
         }
     }

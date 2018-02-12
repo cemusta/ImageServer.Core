@@ -61,5 +61,6 @@ namespace ImageServer.Core.Controllers
             _logger.LogError("File not found");
             return NotFound();
         }
+
     }
 }

@@ -21,7 +21,6 @@ namespace ImageServer.Core.Controllers
         private readonly List<HostConfig> _hosts;
         private readonly IMemoryCache _cache;
 
-
         public VersionController(IConfiguration iconfiguration, IImageService imageService, ILogger<VersionController> logger, IOptions<List<HostConfig>> hosts, IMemoryCache memoryCache)
         {
             _iconfiguration = iconfiguration ?? throw new ArgumentNullException(nameof(iconfiguration));
@@ -66,7 +65,6 @@ namespace ImageServer.Core.Controllers
             return Json(cacheEntry);
         }
 
-
         [HttpGet("/formats")]
         public async Task<IActionResult> ReturnImageFormats()
         {
@@ -95,7 +93,6 @@ namespace ImageServer.Core.Controllers
 
             return Json(cacheEntry);
         }
-
 
     }
 }

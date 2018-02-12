@@ -55,7 +55,8 @@ namespace ImageServer.Core.Controllers
             {
                 var host = _fileService.GetHostConfig(slug);
 
-                if (host.WhiteList != null && host.WhiteList.Any() && host.WhiteList.All(x => x != $"{w}x{h}")) //whitelist checking
+                if (host.WhiteList != null && host.WhiteList.Any() && host.WhiteList.All(x => x != $"{w}x{h}")
+                ) //whitelist checking
                 {
                     _logger.LogError("Image request cancelled due to whitelist.");
                     return new StatusCodeResult((int)HttpStatusCode.BadRequest);
@@ -73,7 +74,8 @@ namespace ImageServer.Core.Controllers
 
                     if (customRatio == null) // request with hash but no customratio
                     {
-                        _logger.LogError("Image request redirected due to wrong custom ratio hash (redirected to base url)");
+                        _logger.LogError(
+                            "Image request redirected due to wrong custom ratio hash (redirected to base url)");
                         return Redirect(string.IsNullOrEmpty(options)
                             ? $"/i/{slug}/{quality}/{w}x{h}/{id}"
                             : $"/i/{slug}/{quality}/{w}x{h}/{options}/{id}");
@@ -81,7 +83,8 @@ namespace ImageServer.Core.Controllers
 
                     if (!double.IsNaN(ratio) && customRatio.Hash != hash) //hash is not correct
                     {
-                        _logger.LogError("Image request redirected due to wrong custom ratio hash (redirected to new customRatio)");
+                        _logger.LogError(
+                            "Image request redirected due to wrong custom ratio hash (redirected to new customRatio)");
                         return Redirect(string.IsNullOrEmpty(options)
                             ? $"/i/{slug}/{quality}/{w}x{h}/h-{customRatio.Hash}/{id}"
                             : $"/i/{slug}/{quality}/{w}x{h}/{options}/h-{customRatio.Hash}/{id}");
@@ -95,6 +98,13 @@ namespace ImageServer.Core.Controllers
                     _logger.LogError("File not found");
                     return NotFound();
                 }
+            }
+            catch (RedirectToFallbackException e)
+            {
+                _logger.LogWarning(e, e.Message);
+                return Redirect(string.IsNullOrEmpty(options)
+                    ? $"/i/{slug}/{quality}/{w}x{h}/{e.FallbackImage}"
+                    : $"/i/{slug}/{quality}/{w}x{h}/{options}/{e.FallbackImage}");
             }
             catch (SlugNotFoundException e)
             {
@@ -133,5 +143,6 @@ namespace ImageServer.Core.Controllers
                 throw;
             }
         }
+
     }
 }

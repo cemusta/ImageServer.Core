@@ -15,4 +15,13 @@ namespace ImageServer.Core.Services
         {
         }
     }
+
+    public class RedirectToFallbackException : Exception
+    {
+        public readonly string FallbackImage;
+        public RedirectToFallbackException(string fallback, string message) : base(message)
+        {
+            FallbackImage = fallback;
+        }
+    }
 }

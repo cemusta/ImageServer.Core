@@ -4,8 +4,6 @@ namespace ImageServer.Core.Model
 {
     public class HostConfig
     {
-
-
         public string Slug { get; set; }
 
         public HostType Type { get; set; }
