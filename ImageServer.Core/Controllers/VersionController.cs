@@ -87,7 +87,7 @@ namespace ImageServer.Core.Controllers
                 _cache.GetOrCreateAsync("ver:hosts", entry =>
                 {
                     _logger.LogInformation("Hosts requested and cached.");
-                    var hosts = _hosts.Select(x => $"{x.Slug} ({x.Type})");
+                    var hosts = _hosts.Select(x => $"{x.Slug} ({x.Type})" + (string.IsNullOrEmpty(x.Path) ? "" : $" : {x.Path}") + (string.IsNullOrEmpty(x.DatabaseName) ? "" : $" : {x.DatabaseName}") + (string.IsNullOrEmpty(x.Backend) ? "" : $" : {x.Backend}"));
                     return Task.FromResult(hosts);
                 });
 
