@@ -26,8 +26,8 @@ namespace ImageServer.Core.Services
                 // the height will be calculated with the aspect ratio.
                 foreach (var magickImage in collection)
                 {
-                    var img = (MagickImage)magickImage;
-                    ResizeSingleImage(requestWidth, requestHeight, quality, options, img);
+                    var gifImage = (MagickImage)magickImage;
+                    ResizeSingleImage(requestWidth, requestHeight, quality, options, gifImage);
                 }
 
                 collection.RePage();
@@ -108,12 +108,12 @@ namespace ImageServer.Core.Services
             if (options.Contains("f") || options.Contains("t")) //scale with aspect of image
             {
                 var size = new MagickGeometry(requestWidth, requestHeight);
-                image.Thumbnail(size);
+                image.Resize(size);
             }
             else if (requestWidth == 0 || requestHeight == 0) //scale with aspect of image
             {
                 var size = new MagickGeometry(requestWidth, requestHeight);
-                image.Thumbnail(size);
+                image.Resize(size);
             }
             else // This will resize the image to a fixed size without maintaining the aspect ratio.
             {
