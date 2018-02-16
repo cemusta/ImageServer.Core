@@ -49,6 +49,12 @@ namespace ImageServer.Core.Controllers
                 return new StatusCodeResult((int)HttpStatusCode.BadRequest);
             }
 
+            if (0 > w || 0 > h)
+            {
+                _logger.LogError("Width or height is negative");
+                return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+            }
+
             byte[] bytes;
             CustomRatio customRatio = null;
             try
@@ -62,7 +68,7 @@ namespace ImageServer.Core.Controllers
                     return new StatusCodeResult((int)HttpStatusCode.BadRequest);
                 }
 
-                if (!string.IsNullOrEmpty(hash) && host.Type == HostType.GridFs) //customratio & mongodb file
+                if (w != 0 && h != 0 && !string.IsNullOrEmpty(hash) && host.Type == HostType.GridFs) //customratio & mongodb file
                 {
                     var metadata = await _metadataService.GetFileMetadataAsync(host, id);
 
