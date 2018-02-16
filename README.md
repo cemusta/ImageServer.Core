@@ -49,6 +49,7 @@ All of these host types need mandatory a **"Slug"** property which will be used 
 
 **"Whitelist"** property can be used for limiting resizing requests to a specific set of resolutions.
 
+**"FallbackImage"** property can be used for changing 404 results with another image, return 302 with that image's link.
 
 
 ## Usage
@@ -88,11 +89,9 @@ todo: Add additional notes about how to deploy this on a live system
 * [Magick.NET](https://github.com/dlemstra/Magick.NET) - The .NET wrapper for the ImageMagick library
 * [NLog.Web.Core](https://github.com/NLog/NLog.Web) - free logging platform for .NET
 
-## Authors
+## Contributors
 
-* **Cem Usta** - *Initial work* - [cemusta](https://github.com/cemusta)
-
-See also the list of [contributors](https://github.com/cemusta/ImageServer.Core/graphs/contributors) who participated in this project.
+See the list of [contributors](https://github.com/cemusta/ImageServer.Core/graphs/contributors) who participated in this project.
 
 ## Acknowledgments
 
