@@ -10,7 +10,13 @@ namespace ImageServer.Core.Route
             RouteDirection routeDirection)
         {
             var val = values[routeKey] as string;
-            if (string.IsNullOrWhiteSpace(val) || val.Length != 24) //gridfs id is 24 char.
+            if (string.IsNullOrWhiteSpace(val) || val.Length < 24) //gridfs id is 24 char.
+                return false;
+
+            var index = val.LastIndexOf('.');
+            val = index == -1 ? val : val.Substring(0, index); //remove extension if any
+
+            if (val.Length != 24) //gridfs id is 24 char.
                 return false;
 
             var regex = new Regex(@"([0-9a-fA-F]{24})");

@@ -8,6 +8,11 @@ namespace ImageServer.Tests
     {
         [Theory]
         [InlineData("55ea0a2df018fbb8f8660eab", true)]
+        [InlineData("55ea0a2df018fbb8f8660eab.jpg", true)]
+        [InlineData("55ea0a2df018fbb8f8660eab.gif", true)]
+        [InlineData("55ea0a2df018fbb8f8660eab.png", true)]
+        [InlineData("55ea0a2df018fbb8f8660eab.jpg.jpg", false)]
+        [InlineData("55ea0a2df018fbb8f8660eab.", true)]
         [InlineData("55ea0a2df018fbb8f8660eab0", false)]    //+1 char
         [InlineData("55ea0a2df018fbb8f8660ea", false)]      //-1 char 
         [InlineData("zzea0a2df018fbb8f8660eab", false)]     //illegal char (z)
