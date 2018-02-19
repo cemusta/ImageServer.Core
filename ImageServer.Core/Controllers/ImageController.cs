@@ -61,8 +61,7 @@ namespace ImageServer.Core.Controllers
             {
                 var host = _fileService.GetHostConfig(slug);
 
-                if (host.WhiteList != null && host.WhiteList.Any() && host.WhiteList.All(x => x != $"{w}x{h}")
-                ) //whitelist checking
+                if (host.WhiteList != null && host.WhiteList.Any() && host.WhiteList.All(x => x != $"{w}x{h}")) //whitelist checking
                 {
                     _logger.LogError("Image request cancelled due to whitelist.");
                     return new StatusCodeResult((int)HttpStatusCode.BadRequest);
@@ -140,12 +139,12 @@ namespace ImageServer.Core.Controllers
                 if (bytes != null)
                     return File(bytes, mime);
 
-                _logger.LogError("File found but image operation failed");
+                _logger.LogError("File found but image operation failed by unknown cause");
                 return StatusCode((int)HttpStatusCode.NotAcceptable);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Image error: " + e.Message);
+                _logger.LogError(e, "Image Service Error: " + e.Message);
                 throw;
             }
         }
