@@ -27,7 +27,7 @@ namespace ImageServer.Core.Services
                 foreach (var magickImage in collection)
                 {
                     var gifImage = (MagickImage)magickImage;
-                    ResizeSingleImage(requestWidth, requestHeight, quality, options, gifImage);
+                    ResizeImage(requestWidth, requestHeight, quality, options, gifImage);
                 }
 
                 collection.RePage();
@@ -40,14 +40,13 @@ namespace ImageServer.Core.Services
             }
         }
 
-        private static byte[] ProcessImage(int requestWidth, int requestHeight,
-            int quality, byte[] bytes, string options, CustomRatio ratio, out string mimeType)
+        private static byte[] ProcessImage(int requestWidth, int requestHeight, int quality, byte[] bytes, string options, CustomRatio ratio, out string mimeType)
         {
             if (ratio != null)
             {
                 using (MagickImage image = new MagickImage(bytes))
                 {
-                    CropSingleImage(ratio, image);
+                    CropImage(ratio, image);
 
                     bytes = image.ToByteArray();
                 }
@@ -55,7 +54,7 @@ namespace ImageServer.Core.Services
 
             using (MagickImage image = new MagickImage(bytes))
             {
-                ResizeSingleImage(requestWidth, requestHeight, quality, options, image);
+                ResizeImage(requestWidth, requestHeight, quality, options, image);
 
                 // return the result
                 if (image.HasAlpha)
@@ -73,7 +72,7 @@ namespace ImageServer.Core.Services
             return bytes;
         }
 
-        private static void CropSingleImage(CustomRatio ratio, IMagickImage image)
+        private static void CropImage(CustomRatio ratio, IMagickImage image)
         {
             var cropWidth = Math.Abs(ratio.X2 - ratio.X1);
             var cropHeight = Math.Abs(ratio.Y2 - ratio.Y1);
@@ -94,8 +93,15 @@ namespace ImageServer.Core.Services
 
         }
 
-        private static void ResizeSingleImage(int requestWidth, int requestHeight, int quality, string options,  IMagickImage image)
+        private static void ResizeImage(int requestWidth, int requestHeight, int quality, string options, IMagickImage image)
         {
+            image.Quality = quality;
+            
+            image.Strip();
+
+            if (options.Contains("g")) //grayscale
+                image.Grayscale(PixelIntensityMethod.Average);
+            
             if (image.BaseWidth == requestWidth && image.BaseHeight == requestHeight) //requested image is same size
             {
                 return;
@@ -125,13 +131,6 @@ namespace ImageServer.Core.Services
                 image.Resize(size);
                 image.Crop(size, Gravity.Center);
             }
-
-            image.Quality = quality;
-
-            if (options.Contains("g")) //grayscale
-                image.Grayscale(PixelIntensityMethod.Average);
-
-            image.Strip();
         }
 
         public string GetVersion()
