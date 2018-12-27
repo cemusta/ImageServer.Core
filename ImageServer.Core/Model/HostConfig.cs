@@ -25,7 +25,8 @@ namespace ImageServer.Core.Model
     {
         FileSystem = 0,
         GridFs = 1,
-        Web = 2
+        Web = 2,
+        GoogleBucket = 3,
     }
 
 }

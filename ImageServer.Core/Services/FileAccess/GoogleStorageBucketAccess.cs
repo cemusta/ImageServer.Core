@@ -1,0 +1,34 @@
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using Google.Cloud.Storage.V1;
+using ImageServer.Core.Model;
+
+namespace ImageServer.Core.Services.FileAccess
+{
+    public class GoogleStorageBucketAccess : IFileAccessStrategy
+    {
+        public async Task<byte[]> GetFileAsync(HostConfig host, string file)
+        {
+            try
+            {
+                using (var stream = new MemoryStream())
+                {
+                    // Instantiates a client.
+                    var storage = StorageClient.Create();
+
+                    // The name for the new bucket.
+                    var bucketName = host.Backend;
+
+                    await storage.DownloadObjectAsync(bucketName, file, stream as Stream);
+
+                    return stream.GetBuffer();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+}

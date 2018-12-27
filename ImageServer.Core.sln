@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageServer.Core", "ImageSe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageServer.Tests", "ImageServer.Tests\ImageServer.Tests.csproj", "{099CDE62-EB57-4550-8125-853AE6290C26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageServer.Integration.Tests", "ImageServer.Integration.Tests\ImageServer.Integration.Tests.csproj", "{C657A021-9CB9-4C81-9481-923FA7AF6F4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageServer.Integration.Tests", "ImageServer.Integration.Tests\ImageServer.Integration.Tests.csproj", "{C657A021-9CB9-4C81-9481-923FA7AF6F4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

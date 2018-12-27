@@ -19,6 +19,11 @@ namespace ImageServer.Core.Services.FileAccess
                 if (host.FallbackImage == null)
                     throw;
 
+                if(file == host.FallbackImage)
+                {
+                    throw new FileNotFoundException("Fallback image not found");
+                }
+
                 throw new RedirectToFallbackException(host.FallbackImage, "Image not found, redirect to fallback");
             }
         }

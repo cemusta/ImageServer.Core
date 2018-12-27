@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using NLog.Web;
 
 namespace ImageServer.Core
 {
@@ -14,6 +15,7 @@ namespace ImageServer.Core
                 .Build();
 
             var host = new WebHostBuilder()
+                .UseNLog()
                 .UseConfiguration(config)
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())

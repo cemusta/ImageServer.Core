@@ -2,7 +2,7 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/1cjhoy5er510ddlx?svg=true)](https://ci.appveyor.com/project/cemusta/imageserver-core) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/cemusta/ImageServer.Core/master/LICENSE)
 
-This project is made for replacing python tornado image proxy server project internally used in [Hurriyet](www.hurriyet.com.tr). Written on .net core 2.0 with async i/o. Uses magick.net (imagemagick for .net) library for image operations. Tested in Linux and Windows.
+This project is made for replacing python tornado image proxy server project internally used in [Hurriyet](www.hurriyet.com.tr). Written on .net core 2.2 with async i/o. Uses magick.net (imagemagick for .net) library for image operations. Tested in Linux and Windows.
 
 Can read files from Mongo GridFS, File System or web url (can support multiple image sources simultaniously). Logs errors to console and Elastic stack (ELK) using NLog.
 
@@ -23,11 +23,11 @@ Image Server takes image source configurations from appsettings.json. Image sour
     {
       "Slug": "hurriyet",
       "Type": 1,
-      "ConnectionString": "mongodb://192.168.113.161:27017",
+      "ConnectionString": "mongodb://192.168.0.1:27017",
       "DatabaseName": "CMS_FS"
     },
     {
-      "Slug": "dg",
+      "Slug": "local or shared disk",
       "Type": 0,
       "Path": "X:\\",
       "Whitelist": [ "800x600", "100x100" ]
@@ -36,14 +36,20 @@ Image Server takes image source configurations from appsettings.json. Image sour
       "Slug": "proxy",
       "Type": 2,
       "Backend": "https://imagizer.imageshack.com/"
+    },
+    {
+      "Slug": "gsbucket",
+      "Type": 3,
+      "Backend": "bucket-name"
     }
   ]
 ```
 
 There are 3 different host types: 0
-* File Server: type 0, needs **"Path"** property which application has file access (can be readonly)
-* GridFs: type 1, needs **"ConnectionString"** and **"DatabaseName"** properties to connect to a Mongo GridFs
+* File Server: type 0, needs **"Path"** property which application has file access (can be readonly).
+* GridFs: type 1, needs **"ConnectionString"** and **"DatabaseName"** properties to connect to a Mongo GridFs.
 * Web Proxy: type 2, needs **"Backend"** property to a web host.
+* Google Storege Bucket: type 3, needs **"Backend"** property of the target bucket containing imagery.
 
 All of these host types need mandatory a **"Slug"** property which will be used later in routing for the image source.
 

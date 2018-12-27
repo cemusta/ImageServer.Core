@@ -61,7 +61,8 @@ namespace ImageServer.Core
             {
                 {HostType.GridFs, new GridFsAccess()},
                 {HostType.FileSystem, new FileSystemAccess()},
-                {HostType.Web, new WebAccess()}
+                {HostType.Web, new WebAccess()},
+                {HostType.GoogleBucket, new GoogleStorageBucketAccess() }
             };
             services.AddSingleton<IDictionary<HostType, IFileAccessStrategy>>(strategyDictionary);
 
@@ -84,9 +85,6 @@ namespace ImageServer.Core
         {
             //add NLog to ASP.NET Core
             loggerFactory.AddNLog();
-
-            //add NLog.Web
-            app.AddNLogWeb();
 
             LogManager.Configuration.Variables["tcpAddress"] = $"{Configuration["Logging:tcpAddress"]}";
 
