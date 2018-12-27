@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ImageMagick;
-using ImageServer.Core.Model;
 
 namespace ImageServer.Core.Services
 {
     public class ImageService : IImageService
     {
-        public byte[] GetImageAsBytes(int requestWidth, int requestHeight, int quality, byte[] bytes, string options, out string mimeType, CustomRatio ratio = null)
+        public byte[] GetImageAsBytes(int requestWidth, int requestHeight, int quality, byte[] bytes, string options, out string mimeType)
         {
             if (!IsGif(bytes))
-                return ProcessImage(requestWidth, requestHeight, quality, bytes, options, ratio, out mimeType);
+                return ProcessImage(requestWidth, requestHeight, quality, bytes, options, out mimeType);
 
             mimeType = "image/gif";
             return ProcessGif(requestWidth, requestHeight, quality, bytes, options);
@@ -40,18 +39,8 @@ namespace ImageServer.Core.Services
             }
         }
 
-        private static byte[] ProcessImage(int requestWidth, int requestHeight, int quality, byte[] bytes, string options, CustomRatio ratio, out string mimeType)
+        private static byte[] ProcessImage(int requestWidth, int requestHeight, int quality, byte[] bytes, string options, out string mimeType)
         {
-            if (ratio != null)
-            {
-                using (MagickImage image = new MagickImage(bytes))
-                {
-                    CropImage(ratio, image);
-
-                    bytes = image.ToByteArray();
-                }
-            }
-
             using (MagickImage image = new MagickImage(bytes))
             {
                 ResizeImage(requestWidth, requestHeight, quality, options, image);
@@ -70,27 +59,6 @@ namespace ImageServer.Core.Services
             }
 
             return bytes;
-        }
-
-        private static void CropImage(CustomRatio ratio, IMagickImage image)
-        {
-            var cropWidth = Math.Abs(ratio.X2 - ratio.X1);
-            var cropHeight = Math.Abs(ratio.Y2 - ratio.Y1);
-
-            if (image.BaseWidth == cropWidth && image.BaseHeight == cropHeight) //requested image is same size
-            {
-                return;
-            }
-
-            var cropSize = new MagickGeometry(cropWidth, cropHeight)
-            {
-                IgnoreAspectRatio = false, //keep aspect ratio!
-                FillArea = false,
-                X = ratio.X1,
-                Y = ratio.Y1
-            };
-            image.Crop(cropSize);
-
         }
 
         private static void ResizeImage(int requestWidth, int requestHeight, int quality, string options, IMagickImage image)

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using ImageServer.Core.Model;
 using ImageServer.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,14 +11,12 @@ namespace ImageServer.Core.Controllers
     public class ImageController : Controller
     {
         private readonly IFileAccessService _fileService;
-        private readonly IFileMetadataService _metadataService;
         private readonly IImageService _imageService;
         private readonly ILogger<ImageController> _logger;
 
-        public ImageController(IFileAccessService fileService, IFileMetadataService metadataService, IImageService imageService, ILogger<ImageController> logger)
+        public ImageController(IFileAccessService fileService, IImageService imageService, ILogger<ImageController> logger)
         {
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
-            _metadataService = metadataService ?? throw new ArgumentNullException(nameof(metadataService));
             _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -54,7 +51,6 @@ namespace ImageServer.Core.Controllers
             }
 
             byte[] bytes;
-            CustomRatio customRatio = null;
             try
             {
                 var host = _fileService.GetHostConfig(slug);
@@ -82,7 +78,7 @@ namespace ImageServer.Core.Controllers
             }
             catch (SlugNotFoundException e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogError(e, "Unknown host requested: " + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.BadRequest);
             }
             catch (GridFsObjectIdException e)
@@ -95,6 +91,11 @@ namespace ImageServer.Core.Controllers
                 _logger.LogError(e, "Timeout: " + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.GatewayTimeout);
             }
+            catch (UnauthorizedAccessException e)
+            {
+                _logger.LogError(e, "Access Denied: " + e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.Unauthorized);
+            }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
@@ -103,7 +104,7 @@ namespace ImageServer.Core.Controllers
 
             try
             {
-                bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mime, customRatio);
+                bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mime);
 
                 if (bytes != null)
                     return File(bytes, mime);

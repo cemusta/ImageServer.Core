@@ -67,7 +67,6 @@ namespace ImageServer.Core
             services.AddSingleton<IDictionary<HostType, IFileAccessStrategy>>(strategyDictionary);
 
             services.AddTransient<IFileAccessService, FileAccessService>();
-            services.AddTransient<IFileMetadataService, FileMetadataService>();
             services.AddTransient<IImageService, ImageService>();
 
             services.Configure<RouteOptions>(options =>

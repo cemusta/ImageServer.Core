@@ -36,7 +36,7 @@ namespace ImageServer.Core.Controllers
             }
             catch (SlugNotFoundException e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogError(e, "Unknown host requested: " + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.BadRequest);
             }
             catch (GridFsObjectIdException e)
@@ -48,6 +48,11 @@ namespace ImageServer.Core.Controllers
             {
                 _logger.LogError(e, "Timeout: " + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.GatewayTimeout);
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                _logger.LogError(e, "Access Denied: " + e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.Unauthorized);
             }
             catch (Exception e)
             {
