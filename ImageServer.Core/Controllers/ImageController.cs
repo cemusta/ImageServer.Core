@@ -26,13 +26,11 @@ namespace ImageServer.Core.Controllers
 
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:gridfs}")]
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{id:gridfs}")]
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/h-{hash:metahash}/{id:gridfs}")]
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/h-{hash:metahash}/{id:gridfs}")]
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{*id}")]
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{*id}")]
-        public async Task<IActionResult> ImageAsync(string id, string slug, int w, int h, int quality, string options = "", string hash = "")
+        public async Task<IActionResult> ImageAsync(string id, string slug, int w, int h, int quality, string options = "")
         {
-            return await ImageResult(id, slug, w, h, quality, options, hash);
+            return await ImageResult(id, slug, w, h, quality, options);
         }
 
         [HttpGet("/i/{slug}/{*filepath}")]
@@ -41,7 +39,7 @@ namespace ImageServer.Core.Controllers
             return await ImageResult(filepath, slug);
         }
 
-        private async Task<IActionResult> ImageResult(string id, string slug, int w = 0, int h = 0, int quality = 100, string options = "", string hash = "")
+        private async Task<IActionResult> ImageResult(string id, string slug, int w = 0, int h = 0, int quality = 100, string options = "")
         {
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -65,35 +63,6 @@ namespace ImageServer.Core.Controllers
                 {
                     _logger.LogError("Image request cancelled due to whitelist.");
                     return new StatusCodeResult((int)HttpStatusCode.BadRequest);
-                }
-
-                if (w != 0 && h != 0 && !string.IsNullOrEmpty(hash) && host.Type == HostType.GridFs) //customratio & mongodb file
-                {
-                    var metadata = await _metadataService.GetFileMetadataAsync(host, id);
-
-                    var ratio = (double)w / h; //image request ratio                    
-
-                    customRatio = double.IsNaN(ratio)
-                        ? metadata.CustomRatio.FirstOrDefault(x => x.Hash == hash)
-                        : metadata.CustomRatio.FirstOrDefault(x => x.MinRatio < ratio && x.MaxRatio >= ratio);
-
-                    if (customRatio == null) // request with hash but no customratio
-                    {
-                        _logger.LogError(
-                            "Image request redirected due to wrong custom ratio hash (redirected to base url)");
-                        return Redirect(string.IsNullOrEmpty(options)
-                            ? $"/i/{slug}/{quality}/{w}x{h}/{id}"
-                            : $"/i/{slug}/{quality}/{w}x{h}/{options}/{id}");
-                    }
-
-                    if (!double.IsNaN(ratio) && customRatio.Hash != hash) //hash is not correct
-                    {
-                        _logger.LogError(
-                            "Image request redirected due to wrong custom ratio hash (redirected to new customRatio)");
-                        return Redirect(string.IsNullOrEmpty(options)
-                            ? $"/i/{slug}/{quality}/{w}x{h}/h-{customRatio.Hash}/{id}"
-                            : $"/i/{slug}/{quality}/{w}x{h}/{options}/h-{customRatio.Hash}/{id}");
-                    }
                 }
 
                 bytes = await _fileService.GetFileAsync(slug, id);
