@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using ImageServer.Core.Model;
 using MongoDB.Bson;
@@ -37,11 +38,10 @@ namespace ImageServer.Core.Services.FileAccess
             {
                 if (ex is GridFSFileNotFoundException || ex is IndexOutOfRangeException || ex is ArgumentNullException)
                 {
-                    return null;
+                    throw new FileNotFoundException(ex.Message, file);
                 }
 
-                //log other errors....
-                throw;
+                throw ex;
             }
 
             return bytes;

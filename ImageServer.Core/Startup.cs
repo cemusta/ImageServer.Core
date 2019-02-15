@@ -82,9 +82,7 @@ namespace ImageServer.Core
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime, ILoggerFactory loggerFactory)
         {
-            //add NLog to ASP.NET Core
-            loggerFactory.AddNLog();
-
+            // passing kibana address to nlog
             LogManager.Configuration.Variables["tcpAddress"] = $"{Configuration["Logging:tcpAddress"]}";
 
             app.UsePerformanceCounter();

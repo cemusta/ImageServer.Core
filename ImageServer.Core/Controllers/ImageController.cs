@@ -65,7 +65,7 @@ namespace ImageServer.Core.Controllers
 
                 if (bytes == null)
                 {
-                    _logger.LogError("File not found");
+                    _logger.LogWarning("File is empty or not found, we should get an exception instead!");
                     return NotFound();
                 }
             }
@@ -93,8 +93,13 @@ namespace ImageServer.Core.Controllers
             }
             catch (UnauthorizedAccessException e)
             {
-                _logger.LogError(e, "Access Denied: " + e.Message);
+                _logger.LogError(e, "Access denied: " + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.Unauthorized);
+            }
+            catch(System.IO.FileNotFoundException e)
+            {
+                _logger.LogError(e, "Filen not found: " + e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.NotFound);
             }
             catch (Exception e)
             {
