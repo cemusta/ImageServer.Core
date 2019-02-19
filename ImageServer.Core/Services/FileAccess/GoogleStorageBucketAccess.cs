@@ -37,10 +37,6 @@ namespace ImageServer.Core.Services.FileAccess
                 }
                 throw ex;
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
         }
     }
 }
