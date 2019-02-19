@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using ImageServer.Core.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
 namespace ImageServer.Core.Controllers
@@ -27,12 +28,14 @@ namespace ImageServer.Core.Controllers
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{*id}")]
         public async Task<IActionResult> ImageAsync(string id, string slug, int w, int h, int quality, string options = "")
         {
+            Response.Headers.Add("Cache-Control", $"public, max-age={TimeSpan.FromDays(1).TotalSeconds}");
             return await ImageResult(id, slug, w, h, quality, options);
         }
 
         [HttpGet("/i/{slug}/{*filepath}")]
         public async Task<IActionResult> ImageFromFilePathAsync(string filepath, string slug)
         {
+            Response.Headers.Add("Cache-Control", $"public, max-age={TimeSpan.FromDays(1).TotalSeconds}");
             return await ImageResult(filepath, slug);
         }
 
@@ -109,10 +112,22 @@ namespace ImageServer.Core.Controllers
 
             try
             {
-                bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mime);
-
+                bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mimeType);
+                
                 if (bytes != null)
-                    return File(bytes, mime);
+                {
+                    var file = File(bytes, mimeType);
+
+                    using (var sha = System.Security.Cryptography.SHA1.Create())
+                    {
+                        var hash = sha.ComputeHash(bytes);
+                        var checksum = $"\"{WebEncoders.Base64UrlEncode(hash)}\"";
+                        file.EntityTag = new Microsoft.Net.Http.Headers.EntityTagHeaderValue(checksum);
+                    }
+                    
+                    return file;
+                }
+                    
 
                 _logger.LogError("File found but image operation failed by unknown cause");
                 return StatusCode((int)HttpStatusCode.NotAcceptable);

@@ -7,7 +7,7 @@
     <RootNamespace>ImageServer.Core</RootNamespace>
     <TypeScriptToolsVersion>2.3</TypeScriptToolsVersion>
     <Platforms>AnyCPU;x64</Platforms>
-    <Version>1.0.20</Version>
+    <Version>1.0.21</Version>
   </PropertyGroup>
 
   <ItemGroup>

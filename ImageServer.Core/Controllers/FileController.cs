@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using ImageServer.Core.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
 namespace ImageServer.Core.Controllers
@@ -61,7 +62,18 @@ namespace ImageServer.Core.Controllers
             }
 
             if (bytes != null)
-                return File(bytes, "application/octet-stream");
+            {
+                var file = File(bytes, "application/octet-stream");
+
+                using (var sha = System.Security.Cryptography.SHA1.Create())
+                {
+                    var hash = sha.ComputeHash(bytes);
+                    var checksum = $"\"{WebEncoders.Base64UrlEncode(hash)}\"";
+                    file.EntityTag = new Microsoft.Net.Http.Headers.EntityTagHeaderValue(checksum);
+                }
+
+                return file;
+            }
 
             _logger.LogError("File not found");
             return NotFound();
