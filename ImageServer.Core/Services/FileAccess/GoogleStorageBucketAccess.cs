@@ -25,8 +25,16 @@ namespace ImageServer.Core.Services.FileAccess
                     return stream.GetBuffer();
                 }
             }
-            catch (Exception ex)
+            catch(Google.Apis.Auth.OAuth2.Responses.TokenResponseException ex)
             {
+                throw new UnauthorizedAccessException($"Google Storage Bucket ({host.Slug}|{host.Backend}): {ex.Message}");
+            }
+            catch (Google.GoogleApiException ex)
+            {
+                if(ex.HttpStatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    throw new FileNotFoundException(ex.Message,file);
+                }
                 throw ex;
             }
         }

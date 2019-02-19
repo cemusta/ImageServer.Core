@@ -24,7 +24,7 @@ namespace ImageServer.Core.Services
 
             if (host == null)
             {
-                throw new SlugNotFoundException($"Unknown host slug requested: {slug}");
+                throw new SlugNotFoundException($"{slug}");
             }
 
             return host;
@@ -35,7 +35,7 @@ namespace ImageServer.Core.Services
             var host = _hosts.Find(x => x.Slug == slug);
             if (host == null)
             {
-                throw new SlugNotFoundException($"Unknown host slug requested: {slug}");
+                throw new SlugNotFoundException($"{slug}");
             }
 
             var access = _strategies[host.Type];

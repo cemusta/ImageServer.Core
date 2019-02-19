@@ -11,7 +11,7 @@ namespace ImageServer.Core
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("hosting.json", true)
+                //.AddJsonFile("hosting.json", true)
                 .Build();
 
             var host = new WebHostBuilder()

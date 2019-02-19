@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using ImageServer.Core.Model;
 using ImageServer.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,27 +11,23 @@ namespace ImageServer.Core.Controllers
     public class ImageController : Controller
     {
         private readonly IFileAccessService _fileService;
-        private readonly IFileMetadataService _metadataService;
         private readonly IImageService _imageService;
         private readonly ILogger<ImageController> _logger;
 
-        public ImageController(IFileAccessService fileService, IFileMetadataService metadataService, IImageService imageService, ILogger<ImageController> logger)
+        public ImageController(IFileAccessService fileService, IImageService imageService, ILogger<ImageController> logger)
         {
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
-            _metadataService = metadataService ?? throw new ArgumentNullException(nameof(metadataService));
             _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:gridfs}")]
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{id:gridfs}")]
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/h-{hash:metahash}/{id:gridfs}")]
-        [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/h-{hash:metahash}/{id:gridfs}")]
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{*id}")]
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{*id}")]
-        public async Task<IActionResult> ImageAsync(string id, string slug, int w, int h, int quality, string options = "", string hash = "")
+        public async Task<IActionResult> ImageAsync(string id, string slug, int w, int h, int quality, string options = "")
         {
-            return await ImageResult(id, slug, w, h, quality, options, hash);
+            return await ImageResult(id, slug, w, h, quality, options);
         }
 
         [HttpGet("/i/{slug}/{*filepath}")]
@@ -41,7 +36,7 @@ namespace ImageServer.Core.Controllers
             return await ImageResult(filepath, slug);
         }
 
-        private async Task<IActionResult> ImageResult(string id, string slug, int w = 0, int h = 0, int quality = 100, string options = "", string hash = "")
+        private async Task<IActionResult> ImageResult(string id, string slug, int w = 0, int h = 0, int quality = 100, string options = "")
         {
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -56,7 +51,6 @@ namespace ImageServer.Core.Controllers
             }
 
             byte[] bytes;
-            CustomRatio customRatio = null;
             try
             {
                 var host = _fileService.GetHostConfig(slug);
@@ -67,40 +61,11 @@ namespace ImageServer.Core.Controllers
                     return new StatusCodeResult((int)HttpStatusCode.BadRequest);
                 }
 
-                if (w != 0 && h != 0 && !string.IsNullOrEmpty(hash) && host.Type == HostType.GridFs) //customratio & mongodb file
-                {
-                    var metadata = await _metadataService.GetFileMetadataAsync(host, id);
-
-                    var ratio = (double)w / h; //image request ratio                    
-
-                    customRatio = double.IsNaN(ratio)
-                        ? metadata.CustomRatio.FirstOrDefault(x => x.Hash == hash)
-                        : metadata.CustomRatio.FirstOrDefault(x => x.MinRatio < ratio && x.MaxRatio >= ratio);
-
-                    if (customRatio == null) // request with hash but no customratio
-                    {
-                        _logger.LogError(
-                            "Image request redirected due to wrong custom ratio hash (redirected to base url)");
-                        return Redirect(string.IsNullOrEmpty(options)
-                            ? $"/i/{slug}/{quality}/{w}x{h}/{id}"
-                            : $"/i/{slug}/{quality}/{w}x{h}/{options}/{id}");
-                    }
-
-                    if (!double.IsNaN(ratio) && customRatio.Hash != hash) //hash is not correct
-                    {
-                        _logger.LogError(
-                            "Image request redirected due to wrong custom ratio hash (redirected to new customRatio)");
-                        return Redirect(string.IsNullOrEmpty(options)
-                            ? $"/i/{slug}/{quality}/{w}x{h}/h-{customRatio.Hash}/{id}"
-                            : $"/i/{slug}/{quality}/{w}x{h}/{options}/h-{customRatio.Hash}/{id}");
-                    }
-                }
-
                 bytes = await _fileService.GetFileAsync(slug, id);
 
                 if (bytes == null)
                 {
-                    _logger.LogError("File not found");
+                    _logger.LogWarning("File is empty or not found, we should get an exception instead!");
                     return NotFound();
                 }
             }
@@ -113,7 +78,7 @@ namespace ImageServer.Core.Controllers
             }
             catch (SlugNotFoundException e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogError(e, "Unknown host requested: " + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.BadRequest);
             }
             catch (GridFsObjectIdException e)
@@ -126,6 +91,16 @@ namespace ImageServer.Core.Controllers
                 _logger.LogError(e, "Timeout: " + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.GatewayTimeout);
             }
+            catch (UnauthorizedAccessException e)
+            {
+                _logger.LogError(e, "Access denied: " + e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.Unauthorized);
+            }
+            catch(System.IO.FileNotFoundException e)
+            {
+                _logger.LogError(e, "Filen not found: " + e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.NotFound);
+            }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
@@ -134,7 +109,7 @@ namespace ImageServer.Core.Controllers
 
             try
             {
-                bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mime, customRatio);
+                bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mime);
 
                 if (bytes != null)
                     return File(bytes, mime);
