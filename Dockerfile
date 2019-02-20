@@ -7,5 +7,6 @@ RUN dotnet publish -c Release -o out
 
 # build runtime image
 FROM microsoft/dotnet:2.2-runtime
-COPY --from=build /app/image-server/out ./
+COPY --from=build /app/image-server/out ./app
+WORKDIR /app
 ENTRYPOINT ["dotnet", "ImageServer.Core.dll"]
