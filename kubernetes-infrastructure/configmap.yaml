@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-settings
+  namespace: default
+data:
+  appsettings.json: |-
+    {
+      "Logging": {
+        "IncludeScopes": false,
+        "LogLevel": {
+          "Default": "Info"
+        },
+        "tcpAddress": "tcp://my.kibanaserver.com:8080"
+      },
+
+      "Hosts": [
+        {
+          "Slug": "gcp",
+          "Type": 3,
+          "Backend": "cis_fti_group"
+        },
+        {
+          "Slug": "proxy",
+          "Type": 2,
+          "Backend": "http://imgsrv.kolb-digital.de/"
+        }
+      ],
+
+      "App": {
+        "VersionName": "now with google storage bucket",
+        "Build": "1.0.21"
+      }
+    }
