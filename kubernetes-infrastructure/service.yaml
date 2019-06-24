@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: image-server-service
+  labels:
+    app: image-server
+spec:
+  type: NodePort
+  selector:
+    app: image-server
+  ports:
+  - protocol: TCP
+    port: 30001
+    nodePort: 30001
