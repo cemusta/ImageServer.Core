@@ -23,6 +23,8 @@ namespace ImageServer.Core.Controllers
         [HttpGet("/f/{slug}/{*id}")]
         public async Task<IActionResult> FileAsync(string id, string slug)
         {
+            Response.Headers.Add("Access-Control-Allow-Origin", "*");
+
             byte[] bytes;
 
             if (string.IsNullOrWhiteSpace(id))

@@ -29,6 +29,7 @@ namespace ImageServer.Core.Controllers
         public async Task<IActionResult> ImageAsync(string id, string slug, int w, int h, int quality, string options = "")
         {
             Response.Headers.Add("Cache-Control", $"public, max-age={TimeSpan.FromDays(1).TotalSeconds}");
+            Response.Headers.Add("Access-Control-Allow-Origin", "*");
             return await ImageResult(id, slug, w, h, quality, options);
         }
 
@@ -36,6 +37,7 @@ namespace ImageServer.Core.Controllers
         public async Task<IActionResult> ImageFromFilePathAsync(string filepath, string slug)
         {
             Response.Headers.Add("Cache-Control", $"public, max-age={TimeSpan.FromDays(1).TotalSeconds}");
+            Response.Headers.Add("Access-Control-Allow-Origin", "*");
             return await ImageResult(filepath, slug);
         }
 
@@ -124,7 +126,7 @@ namespace ImageServer.Core.Controllers
                         var checksum = $"\"{WebEncoders.Base64UrlEncode(hash)}\"";
                         file.EntityTag = new Microsoft.Net.Http.Headers.EntityTagHeaderValue(checksum);
                     }
-                    
+
                     return file;
                 }
                     

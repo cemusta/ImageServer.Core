@@ -44,7 +44,7 @@ namespace ImageServer.Core
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //call this in case you need aspnet-user-authtype/aspnet-user-identity - nlog kullanıyor
+            //call this in case you need aspnet-user-authtype/aspnet-user-identity - nlog using it
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // Add framework services.
