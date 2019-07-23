@@ -10,7 +10,7 @@ namespace ImageServer.Core.Route
             RouteDirection routeDirection)
         {
             var val = values[routeKey] as string;
-            if (string.IsNullOrWhiteSpace(val)) 
+            if (string.IsNullOrWhiteSpace(val))
                 return false;
 
             var regex = new Regex(@"(.+)");

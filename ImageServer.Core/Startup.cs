@@ -87,10 +87,10 @@ namespace ImageServer.Core
 
             app.UsePerformanceCounter();
 
-            app.UseRequestFixer();            
+            app.UseRequestFixer();
 
             app.UseMvc();
-            
+
             appLifetime.ApplicationStarted.Register(OnStarted);
             appLifetime.ApplicationStopping.Register(OnStopping);
             appLifetime.ApplicationStopped.Register(OnStopped);

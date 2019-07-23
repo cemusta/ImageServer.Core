@@ -20,12 +20,12 @@ namespace ImageServer.Core.Services.FileAccess
                     using (var request = new HttpRequestMessage(HttpMethod.Get, url))
                     using (var response = await client.SendAsync(request))
                     {
-                        if(response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
                             throw new FileNotFoundException("File not found", url);
                         }
 
-                        if(response.StatusCode != System.Net.HttpStatusCode.OK)
+                        if (response.StatusCode != System.Net.HttpStatusCode.OK)
                         {
                             throw new HttpRequestException($"Http request not OK: {response.StatusCode}, url: {url}");
                         }

@@ -38,9 +38,9 @@ namespace ImageServer.Tests
             //        ConnectionString = "someConnStr"
             //    }
             //});
-            
-            
-            var sut = new FileAccessService(_fixture.Create<IOptions<List<HostConfig>>>() , _fixture.Create<IDictionary<HostType, IFileAccessStrategy>>());
+
+
+            var sut = new FileAccessService(_fixture.Create<IOptions<List<HostConfig>>>(), _fixture.Create<IDictionary<HostType, IFileAccessStrategy>>());
 
             Assert.Throws<SlugNotFoundException>(() => sut.GetHostConfig("otherSlug"));
         }

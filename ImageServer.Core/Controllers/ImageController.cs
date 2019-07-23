@@ -101,7 +101,7 @@ namespace ImageServer.Core.Controllers
                 _logger.LogError(e, "Access denied: " + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.Unauthorized);
             }
-            catch(System.IO.FileNotFoundException e)
+            catch (System.IO.FileNotFoundException e)
             {
                 _logger.LogError(e, "Filen not found: " + e.Message);
                 return new StatusCodeResult((int)HttpStatusCode.NotFound);
@@ -115,7 +115,7 @@ namespace ImageServer.Core.Controllers
             try
             {
                 bytes = _imageService.GetImageAsBytes(w, h, quality, bytes, options, out var mimeType);
-                
+
                 if (bytes != null)
                 {
                     var file = File(bytes, mimeType);
@@ -129,7 +129,7 @@ namespace ImageServer.Core.Controllers
 
                     return file;
                 }
-                    
+
 
                 _logger.LogError("File found but image operation failed by unknown cause");
                 return StatusCode((int)HttpStatusCode.NotAcceptable);

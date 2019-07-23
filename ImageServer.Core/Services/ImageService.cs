@@ -64,12 +64,12 @@ namespace ImageServer.Core.Services
         private static void ResizeImage(int requestWidth, int requestHeight, int quality, string options, IMagickImage image)
         {
             image.Quality = quality;
-            
+
             image.Strip();
 
             if (options.Contains("g")) //grayscale
                 image.Grayscale(PixelIntensityMethod.Average);
-            
+
             if (image.BaseWidth == requestWidth && image.BaseHeight == requestHeight) //requested image is same size
             {
                 return;

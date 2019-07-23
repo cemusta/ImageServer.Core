@@ -21,7 +21,7 @@ namespace ImageServer.Core.Middleware
         {
             var sw = new Stopwatch();
             sw.Start();
-            
+
             await _next.Invoke(context);
 
             sw.Stop();
@@ -29,7 +29,7 @@ namespace ImageServer.Core.Middleware
                 _logger.LogError($"Progress took long: {sw.ElapsedMilliseconds}ms");
             else if (sw.ElapsedMilliseconds > 5000)
                 _logger.LogWarning($"Progress took long: {sw.ElapsedMilliseconds}ms");
-            else if(sw.ElapsedMilliseconds > 1000)
+            else if (sw.ElapsedMilliseconds > 1000)
                 _logger.LogTrace($"Progress took long: {sw.ElapsedMilliseconds}ms");
         }
     }

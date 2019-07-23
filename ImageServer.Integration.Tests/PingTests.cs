@@ -24,7 +24,7 @@ namespace ImageServer.Integration.Tests
         [InlineData("/unknown", HttpStatusCode.NotFound)]
         public async Task StatusReturnsOkResponse(string url, HttpStatusCode code)
         {
-            var response = await Context.Client.GetAsync(url);            
+            var response = await Context.Client.GetAsync(url);
 
             response.StatusCode.Should().Be(code);
         }

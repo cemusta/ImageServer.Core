@@ -22,7 +22,7 @@ namespace ImageServer.Integration.Tests
         [InlineData("/f/hurriyet/testimage", HttpStatusCode.BadRequest)]
         public async Task UnknownHost(string url, HttpStatusCode code)
         {
-            var response = await Context.Client.GetAsync(url);            
+            var response = await Context.Client.GetAsync(url);
 
             response.StatusCode.Should().Be(code);
         }

@@ -8,7 +8,7 @@ using MongoDB.Driver.GridFS;
 
 namespace ImageServer.Core.Services.FileAccess
 {
-    public class GridFsAccess: IFileAccessStrategy
+    public class GridFsAccess : IFileAccessStrategy
     {
 
         public async Task<byte[]> GetFileAsync(HostConfig host, string file)
@@ -51,7 +51,7 @@ namespace ImageServer.Core.Services.FileAccess
         {
             var client = new MongoClient(host.ConnectionString);
 
-            var database = client.GetDatabase(host.DatabaseName);           
+            var database = client.GetDatabase(host.DatabaseName);
 
             var bucket = new GridFSBucket(database);
             return bucket;

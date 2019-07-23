@@ -19,7 +19,7 @@ namespace ImageServer.Core.Services.FileAccess
                 if (host.FallbackImage == null)
                     throw;
 
-                if(file == host.FallbackImage)
+                if (file == host.FallbackImage)
                 {
                     throw new FileNotFoundException("Fallback image not found");
                 }

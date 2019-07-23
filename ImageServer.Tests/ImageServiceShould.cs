@@ -10,9 +10,9 @@ namespace ImageServer.Tests
         public void ReturnsVersion()
         {
             var sut = new ImageService();
-            
+
             var version = sut.GetVersion();
-            
+
             Assert.True(!string.IsNullOrEmpty(version));
         }
 
@@ -22,7 +22,7 @@ namespace ImageServer.Tests
             var sut = new ImageService();
 
             var version = sut.GetFeatures();
-            
+
             Assert.True(!string.IsNullOrEmpty(version));
         }
 
@@ -30,9 +30,9 @@ namespace ImageServer.Tests
         public void ReturnsSupportedFormats()
         {
             var sut = new ImageService();
-            
+
             var formats = sut.GetSupportedFormats();
-            
+
             Assert.True(formats.Any());
         }
     }

@@ -24,7 +24,7 @@ namespace ImageServer.Core.Middleware
                 _logger.LogWarning($"Bad request, url={url}");
                 while (url.Contains("//"))
                 {
-                    url = url.Replace("//", "/");                    
+                    url = url.Replace("//", "/");
                 }
 
                 context.Request.Path = url;

@@ -23,7 +23,7 @@ namespace ImageServer.Core
                 .UseStartup<Startup>()
                 .Build();
 
-            host.Run();            
+            host.Run();
         }
     }
 }
