@@ -9,6 +9,6 @@ spec:
   selector:
     app: image-server
   ports:
-  - protocol: TCP
-    port: 30001
-    nodePort: 30001
+    - protocol: TCP
+      port: 30001
+      nodePort: 30001
