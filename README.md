@@ -10,7 +10,7 @@ Can read files from Mongo GridFS, File System or web url (can support multiple i
 
 Setting up the project is pretty straight thru. There is no external configuration necessary except the host setup. See deployment for notes on how to deploy the project on a live system.
 
-When started as self hosted, project starts listening on ports 5000 and 5001. 
+When started as self hosted, project starts listening on ports 5000 and 5001.
 
 At least one host configuration should be defined appsettings.json or webserver will not answer image or file endpoints.
 
@@ -46,10 +46,11 @@ Image Server takes image source configurations from appsettings.json. Image sour
 ```
 
 There are 3 different host types: 0
-* File Server: type 0, needs **"Path"** property which application has file access (can be readonly).
-* GridFs: type 1, needs **"ConnectionString"** and **"DatabaseName"** properties to connect to a Mongo GridFs.
-* Web Proxy: type 2, needs **"Backend"** property to a web host.
-* Google Storege Bucket: type 3, needs **"Backend"** property of the target bucket containing imagery.
+
+- File Server: type 0, needs **"Path"** property which application has file access (can be readonly).
+- GridFs: type 1, needs **"ConnectionString"** and **"DatabaseName"** properties to connect to a Mongo GridFs.
+- Web Proxy: type 2, needs **"Backend"** property to a web host.
+- Google Storege Bucket: type 3, needs **"Backend"** property of the target bucket containing imagery.
 
 All of these host types need mandatory a **"Slug"** property which will be used later in routing for the image source.
 
@@ -57,11 +58,10 @@ All of these host types need mandatory a **"Slug"** property which will be used 
 
 **"FallbackImage"** property can be used for changing 404 results with another image, return 302 with that image's link.
 
-
 ## Usage
 
-
 /i/ endpoint is used for image operations, has 5 different usage:
+
 ```
 /i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:gridfs}
 /i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{id:gridfs}
@@ -69,18 +69,30 @@ All of these host types need mandatory a **"Slug"** property which will be used 
 /i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{*id}
 /i/{slug}/{*id}
 ```
+
 /f/ endpoint is used for file download operations:
+
 ```
 /f/{slug}/{id:gridfs}.{ext}
 /f/{slug}/{*id}
 ```
+
 version endpoints can be used to check alive status and version of libraries used.
+
 ```
 /status
 /ver
 /hosts
 /formats
 ```
+
+## Options
+
+| Option     | Description                                                                                                                                                                                                                         |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `f` or `t` | Make this image into a thumbnail. This method modifies the image to contain a thumbnail version of itself, no larger than the given size. This method calculates an appropriate thumbnail size to preserve the aspect of the image. |
+| `g`        | This will convert the given image into a grayscale image.                                                                                                                                                                           |
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
@@ -91,9 +103,9 @@ todo: Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [.Net Core 2.0](https://github.com/aspnet/Home) - Dependency Management
-* [Magick.NET](https://github.com/dlemstra/Magick.NET) - The .NET wrapper for the ImageMagick library
-* [NLog.Web.Core](https://github.com/NLog/NLog.Web) - free logging platform for .NET
+- [.Net Core 2.0](https://github.com/aspnet/Home) - Dependency Management
+- [Magick.NET](https://github.com/dlemstra/Magick.NET) - The .NET wrapper for the ImageMagick library
+- [NLog.Web.Core](https://github.com/NLog/NLog.Web) - free logging platform for .NET
 
 ## Contributors
 
@@ -101,5 +113,5 @@ See the list of [contributors](https://github.com/cemusta/ImageServer.Core/graph
 
 ## Acknowledgments
 
-* Levent Yıldırım
-* Ogun Isık
+- Levent Yıldırım
+- Ogun Isık
