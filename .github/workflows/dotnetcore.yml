@@ -3,7 +3,8 @@ name: build
 on: [push]
 
 jobs:
-  build:
+  testBuild:
+    name: Test and build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -18,14 +19,12 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
   sonarCloudTrigger:
-    name: SonarCloud Trigger
+    name: SonarCloud trigger
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
-      with:
-        projectBaseDir: '.'
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
