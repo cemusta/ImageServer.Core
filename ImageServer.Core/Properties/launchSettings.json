@@ -3,27 +3,18 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5000/",
+      "applicationUrl": "http://localhost:50001/",
       "sslPort": 0
     }
   },
   "profiles": {
-    "IIS Express": {
+    "ImageServer.Core": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "status",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "imgsvr.core": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "ver",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5000"
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
     }
   }
 }

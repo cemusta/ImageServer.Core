@@ -10,10 +10,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog;
-using NLog.Extensions.Logging;
-using NLog.Web;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace ImageServer.Core
@@ -24,7 +23,7 @@ namespace ImageServer.Core
 
         private ILogger _logger;
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath($"{env.ContentRootPath}/conf")
@@ -38,7 +37,7 @@ namespace ImageServer.Core
                 builder.AddUserSecrets("local");
             }
 
-            env.ConfigureNLog("nlog.config");
+            //env.ConfigureNLog("nlog.config");
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -48,9 +47,9 @@ namespace ImageServer.Core
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // Add framework services.
-            services.AddMvc();
+            services.AddRazorPages();
 
-            services.AddSingleton<IConfiguration>(Configuration);
+            //services.AddSingleton<IConfiguration>(Configuration);
 
             services.AddMemoryCache();
 
@@ -80,16 +79,21 @@ namespace ImageServer.Core
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime, ILoggerFactory loggerFactory)
         {
             // passing kibana address to nlog
             LogManager.Configuration.Variables["tcpAddress"] = $"{Configuration["Logging:tcpAddress"]}";
+
+            app.UseRouting();
 
             app.UsePerformanceCounter();
 
             app.UseRequestFixer();
 
-            app.UseMvc();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+            });
 
             appLifetime.ApplicationStarted.Register(OnStarted);
             appLifetime.ApplicationStopping.Register(OnStopping);
