@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using NLog.Web;
 
 namespace ImageServer.Core
@@ -9,21 +10,28 @@ namespace ImageServer.Core
     {
         public static void Main(string[] args)
         {
+            CreateHostBuilder(args).Build().Run();
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 //.AddJsonFile("hosting.json", true)
                 .Build();
 
-            var host = new WebHostBuilder()
-                .UseNLog()
-                .UseConfiguration(config)
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
+            var hostBuilder = Host.CreateDefaultBuilder(args)
+              .ConfigureWebHostDefaults(webBuilder =>
+              {
+                  webBuilder.UseNLog();
+                  webBuilder.UseConfiguration(config);
+                  webBuilder.UseKestrel();
+                  webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
+                  webBuilder.UseIISIntegration();
+                  webBuilder.UseStartup<Startup>();
+              });
 
-            host.Run();
+            return hostBuilder;
         }
     }
 }
