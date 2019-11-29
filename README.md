@@ -2,7 +2,7 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/1cjhoy5er510ddlx?svg=true)](https://ci.appveyor.com/project/cemusta/imageserver-core) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/cemusta/ImageServer.Core/master/LICENSE)
 
-This project is made for replacing python tornado image proxy server project internally used in [Hurriyet](www.hurriyet.com.tr). Written on .net core 2.2 with async i/o. Uses magick.net (imagemagick for .net) library for image operations. Tested in Linux and Windows.
+This project is made for replacing python tornado image proxy server project internally used in [Hurriyet](http://www.hurriyet.com.tr). Written on .net core 3.0 with async i/o. Uses magick.net (imagemagick for .net) library for image operations. Tested in Linux and Windows.
 
 Can read files from Mongo GridFS, File System or web url (can support multiple image sources simultaniously). Logs errors to console and Elastic stack (ELK) using NLog.
 
@@ -21,7 +21,7 @@ Image Server takes image source configurations from appsettings.json. Image sour
 ```sh
 "Hosts": [
     {
-      "Slug": "hurriyet",
+      "Slug": "mng",
       "Type": 1,
       "ConnectionString": "mongodb://192.168.0.1:27017",
       "DatabaseName": "CMS_FS"
@@ -99,11 +99,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Deployment
 
-todo: Add additional notes about how to deploy this on a live system
+Todo: Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-- [.Net Core 2.0](https://github.com/aspnet/Home) - Dependency Management
+- [.Net Core 3.0](https://github.com/aspnet/Home)
 - [Magick.NET](https://github.com/dlemstra/Magick.NET) - The .NET wrapper for the ImageMagick library
 - [NLog.Web.Core](https://github.com/NLog/NLog.Web) - free logging platform for .NET
 
