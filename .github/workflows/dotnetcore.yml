@@ -15,5 +15,7 @@ jobs:
         dotnet-version: '3.0.101'
     - name: Run unit tests
       run: dotnet test --configuration Release ImageServer.Tests/
+    - name: Run integration tests
+      run: dotnet test --configuration Release ImageServer.Integration.Tests/
     - name: Build with dotnet
       run: dotnet build --configuration Release
