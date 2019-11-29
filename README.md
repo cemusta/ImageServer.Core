@@ -1,6 +1,6 @@
 # .Net Core Image Server
 
-[![Build status](https://ci.appveyor.com/api/projects/status/1cjhoy5er510ddlx?svg=true)](https://ci.appveyor.com/project/cemusta/imageserver-core) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/cemusta/ImageServer.Core/master/LICENSE)
+[![GitHub Actions](https://github.com/cemusta/ImageServer.Core/workflows/build/badge.svg)](https://github.com/cemusta/ImageServer.Core/actions) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/cemusta/ImageServer.Core/master/LICENSE)
 
 This project is made for replacing python tornado image proxy server project internally used in [Hurriyet](http://www.hurriyet.com.tr). Written on .net core 3.0 with async i/o. Uses magick.net (imagemagick for .net) library for image operations. Tested in Linux and Windows.
 
