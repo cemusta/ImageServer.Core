@@ -3,12 +3,14 @@ name: build
 on: [push]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  testBuild:
+    name: Test and build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v1
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -19,3 +21,13 @@ jobs:
       run: dotnet test --configuration Release ImageServer.Integration.Tests/
     - name: Build with dotnet
       run: dotnet build --configuration Release
+  sonarCloudTrigger:
+    name: SonarCloud trigger
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
