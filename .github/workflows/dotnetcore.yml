@@ -4,8 +4,11 @@ on: [push]
 
 jobs:
   testBuild:
-    name: Test and build
-    runs-on: ubuntu-latest
+    name: Test and build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
