@@ -3,19 +3,27 @@ name: build
 on: [push]
 
 jobs:
-  build:
-
+  testBuild:
+    name: Test, build and analyze
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v1
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.0.101'
+        dotnet-version: 3.0.101
     - name: Run unit tests
       run: dotnet test --configuration Release ImageServer.Tests/
     - name: Run integration tests
       run: dotnet test --configuration Release ImageServer.Integration.Tests/
+    - name: Install dotnet-sonarscanner
+      run: dotnet tool install --tool-path ./bin dotnet-sonarscanner
+    - name: SonarCloud scan begin
+      run: ./bin/dotnet-sonarscanner begin /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /k:"cemusta_ImageServer.Core" /o:"cemusta" /d:sonar.host.url="https://sonarcloud.io"
     - name: Build with dotnet
       run: dotnet build --configuration Release
+    - name: SonarCloud scan end
+      run: ./bin/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
