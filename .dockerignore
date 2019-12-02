@@ -1,0 +1,17 @@
+# IDE & CI/CD
+.github/
+.vs/
+.vscode/
+
+# Project
+.dockerignore
+.gitignore
+.gitattributes
+Dockerfile
+LICENSE
+README.md
+
+# .NET Core
+*/bin
+*/obj
+*/Properties
