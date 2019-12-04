@@ -36,8 +36,6 @@ namespace ImageServer.Core
             {
                 builder.AddUserSecrets("local");
             }
-
-            //env.ConfigureNLog("nlog.config");
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -48,8 +46,6 @@ namespace ImageServer.Core
 
             // Add framework services.
             services.AddRazorPages();
-
-            //services.AddSingleton<IConfiguration>(Configuration);
 
             services.AddMemoryCache();
 

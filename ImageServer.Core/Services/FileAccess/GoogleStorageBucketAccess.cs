@@ -35,7 +35,8 @@ namespace ImageServer.Core.Services.FileAccess
                 {
                     throw new FileNotFoundException(ex.Message, file);
                 }
-                throw ex;
+
+                throw;
             }
         }
     }

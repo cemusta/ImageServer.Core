@@ -2,6 +2,7 @@
 
 namespace ImageServer.Core.Services
 {
+    [Serializable]
     public class SlugNotFoundException : Exception
     {
         public SlugNotFoundException(string message) : base(message)
@@ -9,6 +10,7 @@ namespace ImageServer.Core.Services
         }
     }
 
+    [Serializable]
     public class GridFsObjectIdException : Exception
     {
         public GridFsObjectIdException(string message) : base(message)
@@ -16,6 +18,7 @@ namespace ImageServer.Core.Services
         }
     }
 
+    [Serializable]
     public class RedirectToFallbackException : Exception
     {
         public readonly string FallbackImage;

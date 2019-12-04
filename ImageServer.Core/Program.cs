@@ -6,7 +6,7 @@ using NLog.Web;
 
 namespace ImageServer.Core
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -17,7 +17,6 @@ namespace ImageServer.Core
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                //.AddJsonFile("hosting.json", true)
                 .Build();
 
             var hostBuilder = Host.CreateDefaultBuilder(args)
