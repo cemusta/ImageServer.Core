@@ -12,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NLog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace ImageServer.Core
@@ -67,9 +66,6 @@ namespace ImageServer.Core
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime, ILoggerFactory loggerFactory)
         {
-            // passing kibana address to nlog
-            //LogManager.Configuration.Variables["tcpAddress"] = $"{Configuration["Logging:tcpAddress"]}";
-
             app.UseRouting();
 
             app.UsePerformanceCounter();

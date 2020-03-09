@@ -11,7 +11,6 @@ namespace ImageServer.Integration.Tests
 {
     public class TestContext : IDisposable
     {
-        private TestServer _server;
         private IHost _host;
         public HttpClient Client { get; private set; }
 
