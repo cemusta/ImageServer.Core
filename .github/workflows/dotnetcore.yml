@@ -14,9 +14,9 @@ jobs:
         with:
           dotnet-version: 3.1.100
       - name: Run unit tests
-        run: dotnet test --configuration Release ImageServer.Tests/
+        run: dotnet test --collect:"XPlat Code Coverage" --configuration Release ImageServer.Tests/
       - name: Run integration tests
-        run: dotnet test --configuration Release ImageServer.Integration.Tests/
+        run: dotnet test --collect:"XPlat Code Coverage" --configuration Release ImageServer.Integration.Tests/
       - name: Install dotnet-sonarscanner
         run: dotnet tool install --tool-path ./bin dotnet-sonarscanner
       - name: SonarCloud scan begin
