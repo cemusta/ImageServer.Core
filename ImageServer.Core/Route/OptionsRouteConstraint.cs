@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using System.Collections.Generic;
 
 namespace ImageServer.Core.Route
 {
@@ -21,18 +22,16 @@ namespace ImageServer.Core.Route
 
         bool StringHasUniqueChars(string key)
         {
-            var charTable = string.Empty;
+            var charTable = new List<char>();
 
             foreach (var character in key)
             {
-                if (charTable.IndexOf(character) == -1)
-                {
-                    charTable += character;
-                }
-                else
+                if (charTable.Contains(character))
                 {
                     return false;
                 }
+
+                charTable.Add(character);
             }
             return true;
         }

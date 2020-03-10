@@ -30,6 +30,19 @@ namespace ImageServer.Core.Controllers
         {
             Response.Headers.Add("Cache-Control", $"public, max-age={TimeSpan.FromDays(1).TotalSeconds}");
             Response.Headers.Add("Access-Control-Allow-Origin", "*");
+
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                _logger.LogError("Id is null");
+                return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+            }
+
+            if (0 > w || 0 > h)
+            {
+                _logger.LogError("Width or height is negative");
+                return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+            }
+
             return await ImageResult(id, slug, w, h, quality, options);
         }
 
@@ -43,18 +56,6 @@ namespace ImageServer.Core.Controllers
 
         private async Task<IActionResult> ImageResult(string id, string slug, int w = 0, int h = 0, int quality = 100, string options = "")
         {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                _logger.LogError("Id is null");
-                return new StatusCodeResult((int)HttpStatusCode.BadRequest);
-            }
-
-            if (0 > w || 0 > h)
-            {
-                _logger.LogError("Width or height is negative");
-                return new StatusCodeResult((int)HttpStatusCode.BadRequest);
-            }
-
             byte[] bytes;
             try
             {

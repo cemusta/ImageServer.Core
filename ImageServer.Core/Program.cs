@@ -6,7 +6,7 @@ using NLog.Web;
 
 namespace ImageServer.Core
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -15,19 +15,17 @@ namespace ImageServer.Core
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                //.AddJsonFile("hosting.json", true)
-                .Build();
-
             var hostBuilder = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(),"conf"));
+                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                })
               .ConfigureWebHostDefaults(webBuilder =>
               {
                   webBuilder.UseNLog();
-                  webBuilder.UseConfiguration(config);
                   webBuilder.UseKestrel();
                   webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
-                  webBuilder.UseIISIntegration();
                   webBuilder.UseStartup<Startup>();
               });
 

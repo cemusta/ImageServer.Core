@@ -12,32 +12,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NLog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace ImageServer.Core
 {
     public class Startup
     {
-        public IConfigurationRoot Configuration { get; }
+        private IConfiguration _configuration { get; }
 
         private ILogger _logger;
 
-        public Startup(IWebHostEnvironment env)
+        public Startup(IConfiguration conf)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath($"{env.ContentRootPath}/conf")
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
-
-            if (env.IsDevelopment())
-            {
-                builder.AddUserSecrets("local");
-            }
-
-            //env.ConfigureNLog("nlog.config");
+            _configuration = conf;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -49,11 +36,9 @@ namespace ImageServer.Core
             // Add framework services.
             services.AddRazorPages();
 
-            //services.AddSingleton<IConfiguration>(Configuration);
-
             services.AddMemoryCache();
 
-            var hosts = Configuration.GetSection("Hosts");
+            var hosts = _configuration.GetSection("Hosts");
             services.Configure<List<HostConfig>>(hosts);
 
             var strategyDictionary = new Dictionary<HostType, IFileAccessStrategy>
@@ -81,9 +66,6 @@ namespace ImageServer.Core
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime, ILoggerFactory loggerFactory)
         {
-            // passing kibana address to nlog
-            LogManager.Configuration.Variables["tcpAddress"] = $"{Configuration["Logging:tcpAddress"]}";
-
             app.UseRouting();
 
             app.UsePerformanceCounter();

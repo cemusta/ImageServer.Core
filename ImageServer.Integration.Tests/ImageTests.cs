@@ -14,14 +14,14 @@ namespace ImageServer.Integration.Tests
         {
             Context = context;
         }
-
+        
         [Theory]
-        [InlineData("/i/proxy/v2/1423x949q90/911/zPCsEi.jpg", HttpStatusCode.OK)]
-        [InlineData("/i/proxy/75/0x0/v2/1423x949q90/911/zPCsEi.jpg", HttpStatusCode.OK)]
-        [InlineData("/i/proxy/75/0x0/g/v2/1423x949q90/911/zPCsEi.jpg", HttpStatusCode.OK)]
-        [InlineData("/i/proxy/75/0x0/f/v2/1423x949q90/911/zPCsEi.jpg", HttpStatusCode.OK)]
-        [InlineData("/i/proxy/75/4x4/v2/1423x949q90/911/zPCsEi.jpg", HttpStatusCode.OK)]
-        [InlineData("/i/proxy/75/0x4/v2/1423x949q90/911/zPCsEi.jpg", HttpStatusCode.OK)]
+        [InlineData("/i/proxy/5.jpg", HttpStatusCode.OK)]
+        [InlineData("/i/proxy/75/0x0/5.jpg", HttpStatusCode.OK)]
+        [InlineData("/i/proxy/75/0x0/g/5.jpg", HttpStatusCode.OK)]
+        [InlineData("/i/proxy/75/0x0/f/5.jpg", HttpStatusCode.OK)]
+        [InlineData("/i/proxy/75/4x4/5.jpg", HttpStatusCode.OK)]
+        [InlineData("/i/proxy/75/0x4/5.jpg", HttpStatusCode.OK)]
         public async Task ProxyTest(string url, HttpStatusCode code)
         {
             var response = await Context.Client.GetAsync(url);
