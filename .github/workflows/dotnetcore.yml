@@ -12,7 +12,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.100
+          dotnet-version: 5.0.100-preview.1
       - name: Run unit tests
         run: dotnet test --configuration Release ImageServer.Tests/
       - name: Run integration tests
@@ -21,9 +21,11 @@ jobs:
         run: dotnet tool install --tool-path ./bin dotnet-sonarscanner
       - name: SonarCloud scan begin
         run: ./bin/dotnet-sonarscanner begin /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /k:"cemusta_ImageServer.Core" /o:"cemusta" /d:sonar.host.url="https://sonarcloud.io"
+        if: "false"
       - name: Build with dotnet
         run: dotnet build --configuration Release
       - name: SonarCloud scan end
         run: ./bin/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        if: "false"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
