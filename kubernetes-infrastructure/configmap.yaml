@@ -6,14 +6,6 @@ metadata:
 data:
   appsettings.json: |-
     {
-      "Logging": {
-        "IncludeScopes": false,
-        "LogLevel": {
-          "Default": "Info"
-        },
-        "tcpAddress": "tcp://my.kibanaserver.com:8080"
-      },
-
       "Hosts": [
         {
           "Slug": "gcp",
@@ -28,7 +20,7 @@ data:
       ],
 
       "App": {
-        "VersionName": "now with google storage bucket",
-        "Build": "1.0.21"
+        "VersionName": "now with google storage bucket .net core 3.1",
+        "Build": "1.0.23"
       }
     }
