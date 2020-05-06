@@ -27,6 +27,7 @@ namespace ImageServer.Core.Model
         GridFs = 1,
         Web = 2,
         GoogleBucket = 3,
+        Azure = 4,
     }
 
 }

@@ -46,7 +46,8 @@ namespace ImageServer.Core
                 {HostType.GridFs, new GridFsAccess()},
                 {HostType.FileSystem, new FileSystemAccess()},
                 {HostType.Web, new WebAccess()},
-                {HostType.GoogleBucket, new GoogleStorageBucketAccess() }
+                {HostType.GoogleBucket, new GoogleStorageBucketAccess() },
+                {HostType.Azure, new AzureBlobStorageAccess(_configuration) }
             };
             services.AddSingleton<IDictionary<HostType, IFileAccessStrategy>>(strategyDictionary);
 
