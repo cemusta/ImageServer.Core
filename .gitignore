@@ -1,4 +1,5 @@
 .vs/
+.vscode/
 hurimg.core/bin/
 hurimg.core/obj/
 ImageServer.Core/bin/

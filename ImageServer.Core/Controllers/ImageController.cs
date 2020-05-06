@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ImageServer.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace ImageServer.Core.Controllers
@@ -14,12 +16,14 @@ namespace ImageServer.Core.Controllers
         private readonly IFileAccessService _fileService;
         private readonly IImageService _imageService;
         private readonly ILogger<ImageController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public ImageController(IFileAccessService fileService, IImageService imageService, ILogger<ImageController> logger)
+        public ImageController(IFileAccessService fileService, IImageService imageService, ILogger<ImageController> logger, IConfiguration configuration)
         {
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{options:opt}/{id:gridfs}")]
@@ -28,7 +32,11 @@ namespace ImageServer.Core.Controllers
         [HttpGet("/i/{slug}/{quality:range(0,100)}/{w:range(0,5000)}x{h:range(0,5000)}/{*id}")]
         public async Task<IActionResult> ImageAsync(string id, string slug, int w, int h, int quality, string options = "")
         {
-            Response.Headers.Add("Cache-Control", $"public, max-age={TimeSpan.FromDays(1).TotalSeconds}");
+            if (!int.TryParse(_configuration.GetValue<string>("CacheControlMaxAgeDay"), NumberStyles.Integer, CultureInfo.InvariantCulture, out int maxAgeDay))
+            {
+                maxAgeDay = 1;
+            }
+            Response.Headers.Add("Cache-Control", $"public, max-age={TimeSpan.FromDays(maxAgeDay).TotalSeconds}");
             Response.Headers.Add("Access-Control-Allow-Origin", "*");
 
             if (string.IsNullOrWhiteSpace(id))
@@ -49,7 +57,11 @@ namespace ImageServer.Core.Controllers
         [HttpGet("/i/{slug}/{*filepath}")]
         public async Task<IActionResult> ImageFromFilePathAsync(string filepath, string slug)
         {
-            Response.Headers.Add("Cache-Control", $"public, max-age={TimeSpan.FromDays(1).TotalSeconds}");
+            if (!int.TryParse(_configuration.GetValue<string>("CacheControlMaxAgeDay"), NumberStyles.Integer, CultureInfo.InvariantCulture, out int maxAgeDay))
+            {
+                maxAgeDay = 1;
+            }
+            Response.Headers.Add("Cache-Control", $"public, max-age={TimeSpan.FromDays(maxAgeDay).TotalSeconds}");
             Response.Headers.Add("Access-Control-Allow-Origin", "*");
             return await ImageResult(filepath, slug);
         }

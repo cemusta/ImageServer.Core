@@ -45,6 +45,11 @@ Image Server takes image source configurations from appsettings.json. Image sour
       "Slug": "gsbucket",
       "Type": 3,
       "Backend": "bucket-name"
+    },
+    {
+      "Slug": "azure",
+      "Type": 4,
+      "Backend": ""
     }
   ]
 ```
@@ -89,6 +94,28 @@ version endpoints can be used to check alive status and version of libraries use
 /hosts
 /formats
 ```
+
+### Azure Blob Storage Feature
+
+If you have an Azure Account and blob storage subscription, you have to create a new **Access Key** from portal or CLI. It could be like that; `DefaultEndpointsProtocol=https;AccountName=[YOUR_STORAGE_NAME];AccountKey=[YOUR_ACCOUNT_KEY]==;EndpointSuffix=core.windows.net`.
+
+You need to add this value to the environment variable with `IMAGESERVER_AzureConnectionString` key.
+
+You can create a new container from `Blob service > Container` menus. Assume that you have a container which is named as `sample-photos`. It has two directories and a the picture at the last directory (`summer > hotels > swimming.jpg`).
+
+Reach your blob with the url: `https://localhost:5001/i/azure/100/300x300/g/sample-photos/summer/hotels/swimming.jpg`
+
+or if you add the Azure feature to your configuration file like that;
+
+```json
+{
+  "Slug": "azure",
+  "Type": 4,
+  "Backend": "sample-photos"
+}
+```
+
+you can reach via; `https://localhost:5001/i/azure/100/300x300/g/summer/hotels/swimming.jpg`
 
 ## Options
 

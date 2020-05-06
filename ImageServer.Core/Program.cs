@@ -18,7 +18,8 @@ namespace ImageServer.Core
             var hostBuilder = Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    config.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(),"conf"));
+                    config.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "conf"));
+                    config.AddEnvironmentVariables("IMAGESERVER_");
                     config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                 })
               .ConfigureWebHostDefaults(webBuilder =>
